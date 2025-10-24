@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modul Kesetimbangan Kimia Interaktif</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-dark: #1e40af;
+      --purple: #7c3aed;
+      --green: #16a34a;
+      --light: #f9fafb;
+      --gray: #4b5563;
+      --red: #dc2626;
+      --orange: #f97316;
+    }
+
+    * {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+    body {background:var(--light);color:var(--gray);}
+    
+    header {background:white;box-shadow:0 2px 6px rgba(0,0,0,0.1);position:sticky;top:0;z-index:50;}
+    nav {display:flex;justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;padding:1rem;flex-wrap:wrap;}
+    nav h1 {font-size:1.5rem;font-weight:700;color:var(--blue);}
+    .nav-btns {display:flex;gap:0.5rem;flex-wrap:wrap;}
+    .nav-btns button {
+      background:none;border:none;padding:0.5rem 1rem;font-weight:600;cursor:pointer;border-radius:8px;transition:0.3s;
+    }
+    .nav-btns button:hover {background:var(--blue);color:white;}
+    
+    main {max-width:1100px;margin:2rem auto;padding:1rem;}
+    .hidden {display:none;}
+    
+    .hero {
+      text-align:center;padding:3rem 1rem;background:linear-gradient(to right,var(--blue),var(--purple));
+      color:white;border-radius:1rem;box-shadow:0 4px 12px rgba(0,0,0,0.1);margin-bottom:2rem;
+    }
+    .hero h2 {font-size:2.5rem;font-weight:700;margin-bottom:1rem;}
+    .hero p {font-size:1.1rem;margin-bottom:2rem;}
+    .hero button {
+      background:white;color:var(--blue-dark);font-weight:700;padding:0.8rem 1.5rem;border:none;border-radius:8px;cursor:pointer;transition:0.3s;
+    }
+    .hero button:hover {background:var(--blue-dark);color:white;}
+    
+    h2.section-title {
+      font-size:2rem;font-weight:700;color:var(--blue);margin-bottom:1rem;border-left:6px solid var(--blue);padding-left:0.75rem;
+    }
+    
+    .card {
+      background:white;border-radius:1rem;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .simulation-box {
+      background:linear-gradient(135deg,#e0f2fe 0%,#dbeafe 100%);
+      border-radius:1rem;padding:2rem;margin:1rem 0;border:3px solid var(--blue);
+    }
+    
+    .molecule {
+      display:inline-block;width:35px;height:35px;border-radius:50%;
+      margin:4px;animation:float 3s ease-in-out infinite;box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    }
+    .reactant {background:linear-gradient(135deg,#ef4444,#dc2626);}
+    .product {background:linear-gradient(135deg,#10b981,#059669);}
+    
+    @keyframes float {
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-8px)}
+    }
+    
+    .control-panel {
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1.5rem;
+    }
+    
+    .control-item {
+      background:white;padding:1rem;border-radius:0.75rem;border:2px solid #e5e7eb;
+    }
+    .control-item label {display:block;font-weight:600;color:var(--blue);margin-bottom:0.5rem;font-size:0.95rem;}
+    .control-item input[type="range"] {width:100%;margin:0.5rem 0;cursor:pointer;}
+    .control-item input[type="number"] {
+      width:100%;padding:0.6rem;border:2px solid var(--blue);border-radius:0.5rem;font-size:1rem;margin:0.5rem 0;
+    }
+    .control-item button {
+      width:100%;padding:0.75rem;background:var(--purple);color:white;border:none;
+      border-radius:0.5rem;font-weight:600;cursor:pointer;transition:0.3s;
+    }
+    .control-item button:hover {background:var(--blue);transform:scale(1.02);}
+    
+    .result-box {
+      background:#fef3c7;padding:1.5rem;border-radius:0.75rem;margin-top:1rem;
+      border-left:6px solid var(--orange);
+    }
+    .result-box h4 {color:#92400e;margin-bottom:0.5rem;font-size:1.2rem;}
+    
+    .stats {
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-top:1rem;
+    }
+    .stat-item {
+      text-align:center;padding:1rem;background:#f0f9ff;border-radius:0.75rem;border:2px solid var(--blue);
+    }
+    .stat-item .number {font-size:2rem;font-weight:700;color:var(--blue);}
+    .stat-item .label {font-size:0.9rem;color:var(--gray);margin-top:0.25rem;}
+    
+    .news-card {
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      color:white;padding:1.5rem;border-radius:1rem;margin-bottom:1rem;
+      box-shadow:0 8px 20px rgba(0,0,0,0.2);
+    }
+    .news-card h3 {margin-bottom:1rem;font-size:1.5rem;}
+    .news-card p {line-height:1.8;margin-bottom:0.5rem;}
+    .news-card ul {margin-left:1.5rem;line-height:1.8;}
+    .news-card .date {opacity:0.9;font-size:0.9rem;margin-top:1rem;font-style:italic;}
+    
+    .quiz-option {
+      display:block;width:100%;padding:1rem;margin-bottom:0.75rem;
+      background:#f3f4f6;border:3px solid transparent;border-radius:0.75rem;
+      cursor:pointer;transition:0.3s;text-align:left;font-size:1rem;font-weight:500;
+    }
+    .quiz-option:hover:not(:disabled) {background:#e0e7ff;transform:translateX(5px);}
+    .quiz-option.correct {background:#dcfce7;border-color:var(--green);}
+    .quiz-option.wrong {background:#fee2e2;border-color:var(--red);}
+    .quiz-option:disabled {cursor:not-allowed;}
+    
+    .quiz-tabs {
+      display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;
+    }
+    .quiz-tab {
+      flex:1;min-width:200px;padding:1rem;background:linear-gradient(135deg,#e0e7ff,#c7d2fe);
+      border:3px solid transparent;border-radius:0.75rem;cursor:pointer;text-align:center;
+      font-weight:600;transition:0.3s;
+    }
+    .quiz-tab:hover {transform:translateY(-3px);box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+    .quiz-tab.active {background:linear-gradient(135deg,var(--blue),var(--purple));color:white;border-color:var(--blue);}
+    
+    .calc-input-box {
+      background:#f0f9ff;padding:1rem;border-radius:0.75rem;border:2px solid var(--blue);margin:1rem 0;
+    }
+    .calc-input-box label {
+      display:block;font-weight:600;color:var(--blue);margin-bottom:0.5rem;
+    }
+    .calc-input-box input {
+      width:100%;padding:0.8rem;border:2px solid var(--gray);border-radius:0.5rem;
+      font-size:1.1rem;margin-bottom:0.5rem;
+    }
+    
+    canvas {max-width:100%;border-radius:0.5rem;background:white;}
+    
+    footer {
+      background:var(--blue-dark);color:white;text-align:center;padding:1rem;margin-top:2rem;
+    }
+
+    @media (max-width: 768px) {
+      nav h1 {font-size:1.2rem;}
+      .hero h2 {font-size:2rem;}
+      .control-panel {grid-template-columns:1fr;}
+      .quiz-tab {min-width:150px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <h1>🧪 Modul Kesetimbangan Kimia Interaktif</h1>
+      <div class="nav-btns">
+        <button onclick="showSection('home')">Beranda</button>
+        <button onclick="showSection('teori')">Teori</button>
+        <button onclick="showSection('sim-dinamis')">Simulasi Dinamis</button>
+        <button onclick="showSection('sim-kc')">Kalkulator Kc</button>
+        <button onclick="showSection('sim-lechat')">Le Chatelier</button>
+        <button onclick="showSection('isu')">Literasi Kesetimbangan</button>
+        <button onclick="showSection('kuis')">Kuis Interaktif</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- BERANDA -->
+    <section id="home">
+      <div class="hero">
+        <h2>Modul Kesetimbangan Kimia</h2>
+        <p>Pelajari konsep kesetimbangan kimia melalui simulasi interaktif dan isu sosio-scientific terkini</p>
+        <button onclick="showSection('teori')">🚀 Mulai Belajar</button>
+      </div>
+      
+      <div class="card">
+        <h2 class="section-title">Fitur Modul</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;">
+          <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;padding:1.5rem;border-radius:0.75rem;">
+            <h3 style="margin-bottom:0.5rem;">📚 Teori Lengkap</h3>
+            <p>Materi kesetimbangan kimia, tetapan K, dan Prinsip Le Chatelier</p>
+          </div>
+          <div style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;padding:1.5rem;border-radius:0.75rem;">
+            <h3 style="margin-bottom:0.5rem;">⚗️ Simulasi Interaktif</h3>
+            <p>Visualisasi dinamis reaksi kesetimbangan dan perubahan kondisi</p>
+          </div>
+          <div style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:1.5rem;border-radius:0.75rem;">
+            <h3 style="margin-bottom:0.5rem;">🎯 Kuis Interaktif</h3>
+            <p>Uji pemahaman dengan berbagai jenis kuis menarik</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEORI -->
+    <section id="teori" class="hidden">
+      <div class="hero" style="background:linear-gradient(to right,#059669,#0891b2);">
+        <h2>📖 Teori Kesetimbangan Kimia</h2>
+        <p>Konsep dasar dan prinsip kesetimbangan kimia</p>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">1. Pengertian Kesetimbangan Kimia</h2>
+        <p><strong>Definisi:</strong> Kesetimbangan kimia adalah kondisi dimana laju reaksi maju sama dengan laju reaksi balik dalam suatu reaksi reversibel, sehingga konsentrasi reaktan dan produk tidak berubah terhadap waktu secara makroskopis.</p>
+        
+        <h3 style="color:var(--purple);margin-top:1.5rem;margin-bottom:0.5rem;font-size:1.3rem;">Ciri-ciri Kesetimbangan Kimia:</h3>
+        <ul style="margin-left:1.5rem;line-height:1.8;">
+          <li>Reaksi bersifat reversibel (dapat balik)</li>
+          <li>Berlangsung dalam sistem tertutup</li>
+          <li>Bersifat dinamis (reaksi tetap berlangsung)</li>
+          <li>Konsentrasi zat tetap (makroskopis)</li>
+          <li>Laju reaksi maju = laju reaksi balik</li>
+          <li>Dapat dicapai dari arah manapun</li>
+        </ul>
+
+        <h3 style="color:var(--purple);margin-top:1.5rem;margin-bottom:0.5rem;font-size:1.3rem;">Contoh Reaksi Kesetimbangan:</h3>
+        <div style="background:#f0f9ff;padding:1rem;border-radius:8px;margin-top:0.5rem;">
+          <p style="text-align:center;font-weight:600;font-size:1.1rem;">N₂(g) + 3H₂(g) ⇌ 2NH₃(g)</p>
+          <p style="text-align:center;color:var(--gray);margin-top:0.5rem;">Pembentukan Amonia (Proses Haber)</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">2. Tetapan Kesetimbangan (K)</h2>
+        <p>Tetapan kesetimbangan adalah perbandingan hasil kali konsentrasi produk dengan hasil kali konsentrasi reaktan, masing-masing dipangkatkan dengan koefisien reaksinya.</p>
+        
+        <div style="background:#f0f9ff;padding:1rem;border-radius:8px;margin-top:1rem;">
+          <p style="margin-bottom:0.5rem;"><strong>Untuk reaksi:</strong> aA + bB ⇌ cC + dD</p>
+          <p style="text-align:center;font-weight:600;font-size:1.2rem;margin:1rem 0;">
+            Kc = [C]ᶜ [D]ᵈ / [A]ᵃ [B]ᵇ
+          </p>
+        </div>
+
+        <h3 style="color:var(--purple);margin-top:1.5rem;margin-bottom:0.5rem;font-size:1.3rem;">Interpretasi Nilai K:</h3>
+        <ul style="margin-left:1.5rem;line-height:1.8;">
+          <li><strong>K >> 1:</strong> Reaksi condong ke kanan (produk lebih banyak)</li>
+          <li><strong>K << 1:</strong> Reaksi condong ke kiri (reaktan lebih banyak)</li>
+          <li><strong>K ≈ 1:</strong> Jumlah produk dan reaktan seimbang</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">3. Prinsip Le Chatelier</h2>
+        <p><strong>Bunyi:</strong> Jika suatu sistem kesetimbangan mengalami perubahan (konsentrasi, tekanan, volume, atau suhu), maka sistem akan menggeser kesetimbangan untuk mengurangi atau melawan perubahan tersebut.</p>
+        
+        <h3 style="color:var(--purple);margin-top:1.5rem;margin-bottom:1rem;font-size:1.3rem;">📊 A. Pengaruh Perubahan Konsentrasi</h3>
+        <div style="background:#dbeafe;padding:1.5rem;border-radius:8px;border:2px solid var(--blue);margin-bottom:1rem;">
+          <p style="line-height:1.8;margin-bottom:1rem;">Jika konsentrasi salah satu zat diubah, kesetimbangan akan bergeser untuk mengurangi perubahan tersebut.</p>
+          <ul style="margin-left:1.5rem;line-height:1.8;">
+            <li><strong>Menambah konsentrasi reaktan</strong> → kesetimbangan bergeser ke <strong>kanan</strong> (membentuk lebih banyak produk)</li>
+            <li><strong>Menambah konsentrasi produk</strong> → kesetimbangan bergeser ke <strong>kiri</strong> (membentuk lebih banyak reaktan)</li>
+            <li><strong>Mengurangi konsentrasi reaktan</strong> → kesetimbangan bergeser ke <strong>kiri</strong></li>
+            <li><strong>Mengurangi konsentrasi produk</strong> → kesetimbangan bergeser ke <strong>kanan</strong></li>
+          </ul>
+        </div>
+
+        <h3 style="color:var(--purple);margin-top:1.5rem;margin-bottom:1rem;font-size:1.3rem;">💨 B. Pengaruh Perubahan Tekanan dan Volume</h3>
+        <div style="background:#dcfce7;padding:1.5rem;border-radius:8px;border:2px solid var(--green);margin-bottom:1rem;">
+          <p style="line-height:1.8;margin-bottom:1rem;">Perubahan tekanan/volume hanya berpengaruh pada reaksi gas dengan jumlah koefisien yang berbeda.</p>
+          <ul style="margin-left:1.5rem;line-height:1.8;">
+            <li><strong>Tekanan diperbesar (volume diperkecil)</strong> → kesetimbangan bergeser ke arah jumlah koefisien <strong>lebih kecil</strong></li>
+            <li><strong>Tekanan diperkecil (volume diperbesar)</strong> → kesetimbangan bergeser ke arah jumlah koefisien <strong>lebih besar</strong></li>
+            <li><strong>Jika jumlah koefisien sama</strong> → tidak ada pergeseran kesetimbangan</li>
+          </ul>
+        </div>
+
+        <h3 style="color:var(--purple);margin-top:1.5rem;margin-bottom:1rem;font-size:1.3rem;">🌡️ C. Pengaruh Perubahan Suhu</h3>
+        <div style="background:#fee2e2;padding:1.5rem;border-radius:8px;border:2px solid var(--red);margin-bottom:1rem;">
+          <p style="line-height:1.8;margin-bottom:1rem;">Pengaruh suhu tergantung pada jenis reaksi (eksoterm atau endoterm).</p>
+          
+          <div style="background:white;padding:1rem;border-radius:8px;margin-bottom:1rem;">
+            <h4 style="color:#dc2626;margin-bottom:0.5rem;">🔥 Reaksi Eksoterm (ΔH negatif)</h4>
+            <ul style="margin-left:1.5rem;line-height:1.8;">
+              <li><strong>Suhu dinaikkan</strong> → bergeser ke <strong>kiri</strong></li>
+              <li><strong>Suhu diturunkan</strong> → bergeser ke <strong>kanan</strong></li>
+            </ul>
+          </div>
+          
+          <div style="background:white;padding:1rem;border-radius:8px;">
+            <h4 style="color:#0891b2;margin-bottom:0.5rem;">❄️ Reaksi Endoterm (ΔH positif)</h4>
+            <ul style="margin-left:1.5rem;line-height:1.8;">
+              <li><strong>Suhu dinaikkan</strong> → bergeser ke <strong>kanan</strong></li>
+              <li><strong>Suhu diturunkan</strong> → bergeser ke <strong>kiri</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 style="color:var(--purple);margin-top:1.5rem;margin-bottom:1rem;font-size:1.3rem;">⚡ D. Pengaruh Katalis</h3>
+        <div style="background:#fef3c7;padding:1.5rem;border-radius:8px;border:2px solid var(--orange);">
+          <p style="line-height:1.8;"><strong>PENTING:</strong> Katalis <strong>TIDAK menggeser</strong> posisi kesetimbangan! Katalis hanya mempercepat tercapainya kesetimbangan.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIMULASI DINAMIS -->
+    <section id="sim-dinamis" class="hidden">
+      <div class="hero" style="background:linear-gradient(to right,var(--purple),#c026d3);">
+        <h2>⚗️ Simulasi Kesetimbangan Dinamis</h2>
+        <p>Visualisasi reaksi maju dan balik pada kesetimbangan</p>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Reaksi: N₂(g) + 3H₂(g) ⇌ 2NH₃(g)</h2>
+        
+        <div class="simulation-box">
+          <div style="display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;">
+            <div style="text-align:center;min-width:200px;">
+              <h3 style="color:var(--red);margin-bottom:1rem;">Reaktan</h3>
+              <div id="reactant-molecules" style="min-height:80px;"></div>
+            </div>
+            <div style="font-size:3rem;color:var(--blue);font-weight:700;">⇌</div>
+            <div style="text-align:center;min-width:200px;">
+              <h3 style="color:var(--green);margin-bottom:1rem;">Produk</h3>
+              <div id="product-molecules" style="min-height:80px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat-item">
+            <div class="number" id="reactant-count">15</div>
+            <div class="label">Molekul Reaktan</div>
+          </div>
+          <div class="stat-item">
+            <div class="number" id="product-count">5</div>
+            <div class="label">Molekul Produk</div>
+          </div>
+          <div class="stat-item">
+            <div class="number" id="rate-display" style="font-size:1.5rem;">Seimbang</div>
+            <div class="label">Status Kesetimbangan</div>
+          </div>
+        </div>
+
+        <div class="control-panel">
+          <div class="control-item">
+            <label>Laju Reaksi Maju: <span id="forward-val">5</span></label>
+            <input type="range" id="forward-rate" min="0" max="10" value="5" oninput="updateRates()">
+          </div>
+          <div class="control-item">
+            <label>Laju Reaksi Balik: <span id="backward-val">5</span></label>
+            <input type="range" id="backward-rate" min="0" max="10" value="5" oninput="updateRates()">
+          </div>
+          <div class="control-item">
+            <button onclick="startSimulation()">▶️ Mulai Simulasi</button>
+          </div>
+          <div class="control-item">
+            <button onclick="stopSimulation()" style="background:var(--orange);">⏸️ Berhenti</button>
+          </div>
+          <div class="control-item">
+            <button onclick="resetSimulation()" style="background:var(--red);">🔄 Reset</button>
+          </div>
+        </div>
+
+        <div class="result-box">
+          <h4>💡 Penjelasan:</h4>
+          <p id="explanation">Sesuaikan laju reaksi maju dan balik untuk melihat perubahan kesetimbangan. Ketika laju sama, sistem berada dalam kesetimbangan dinamis.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- KALKULATOR Kc -->
+    <section id="sim-kc" class="hidden">
+      <div class="hero" style="background:linear-gradient(to right,#f97316,#ea580c);">
+        <h2>🧮 Kalkulator Tetapan Kesetimbangan (Kc)</h2>
+        <p>Hitung nilai Kc untuk reaksi kesetimbangan</p>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Rumus: Kc = [C]ᶜ × [D]ᵈ / [A]ᵃ × [B]ᵇ</h2>
+        <p style="margin-bottom:1rem;">Untuk reaksi umum: <strong>aA + bB ⇌ cC + dD</strong></p>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+          <div style="background:#fee2e2;padding:1.5rem;border-radius:1rem;">
+            <h3 style="color:var(--red);margin-bottom:1rem;">Reaktan</h3>
+            <div class="control-item" style="border:none;padding:0.5rem 0;">
+              <label>Konsentrasi [A] (M):</label>
+              <input type="number" id="conc-a" value="0.5" step="0.1" min="0">
+            </div>
+            <div class="control-item" style="border:none;padding:0.5rem 0;">
+              <label>Koefisien a:</label>
+              <input type="number" id="coef-a" value="1" step="1" min="0">
+            </div>
+            <div class="control-item" style="border:none;padding:0.5rem 0;">
+              <label>Konsentrasi [B] (M):</label>
+              <input type="number" id="conc-b" value="0.5" step="0.1" min="0">
+            </div>
+            <div class="control-item" style="border:none;padding:0.5rem 0;">
+              <label>Koefisien b:</label>
+              <input type="number" id="coef-b" value="1" step="1" min="0">
+            </div>
+          </div>
+          
+          <div style="background:#dcfce7;padding:1.5rem;border-radius:1rem;">
+            <h3 style="color:var(--green);margin-bottom:1rem;">Produk</h3>
+            <div class="control-item" style="border:none;padding:0.5rem 0;">
+              <label>Konsentrasi [C] (M):</label>
+              <input type="number" id="conc-c" value="2" step="0.1" min="0">
+            </div>
+            <div class="control-item" style="border:none;padding:0.5rem 0;">
+              <label>Koefisien c:</label>
+              <input type="number" id="coef-c" value="1" step="1" min="0">
+            </div>
+            <div class="control-item" style="border:none;padding:0.5rem 0;">
+              <label>Konsentrasi [D] (M):</label>
+              <input type="number" id="conc-d" value="2" step="0.1" min="0">
+            </div>
+            <div class="control-item" style="border:none;padding:0.5rem 0;">
+              <label>Koefisien d:</label>
+              <input type="number" id="coef-d" value="1" step="1" min="0">
+            </div>
+          </div>
+        </div>
+
+        <button onclick="calculateKc()" style="width:100%;padding:1.2rem;background:var(--purple);color:white;border:none;border-radius:0.75rem;font-weight:700;font-size:1.1rem;cursor:pointer;">
+          🔬 Hitung Kc Sekarang
+        </button>
+
+        <div id="kc-result" class="result-box" style="display:none;margin-top:1.5rem;">
+          <h4>📊 Hasil Perhitungan:</h4>
+          <p style="font-size:2rem;font-weight:700;color:var(--blue);margin:1rem 0;text-align:center;" id="kc-value"></p>
+          <p id="kc-interpretation" style="font-size:1.1rem;line-height:1.8;"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- LE CHATELIER -->
+    <section id="sim-lechat" class="hidden">
+      <div class="hero" style="background:linear-gradient(to right,#10b981,#059669);">
+        <h2>⚖️ Simulator Prinsip Le Chatelier</h2>
+        <p>Lihat bagaimana sistem merespons perubahan kondisi</p>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Reaksi: 2SO₂(g) + O₂(g) ⇌ 2SO₃(g) ΔH = -196 kJ</h2>
+        <p style="margin-bottom:1rem;"><strong>Catatan:</strong> Reaksi ini eksoterm (melepas panas)</p>
+        
+        <div class="simulation-box">
+          <div style="text-align:center;margin-bottom:1.5rem;">
+            <div style="display:inline-block;padding:1rem;background:white;border-radius:0.75rem;margin:0.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+              <strong>SO₂:</strong> <span id="so2-amount" style="font-size:1.5rem;color:var(--red);font-weight:700;">4</span> mol
+            </div>
+            <div style="display:inline-block;padding:1rem;background:white;border-radius:0.75rem;margin:0.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+              <strong>O₂:</strong> <span id="o2-amount" style="font-size:1.5rem;color:var(--blue);font-weight:700;">2</span> mol
+            </div>
+            <div style="display:inline-block;padding:1rem;background:white;border-radius:0.75rem;margin:0.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+              <strong>SO₃:</strong> <span id="so3-amount" style="font-size:1.5rem;color:var(--green);font-weight:700;">3</span> mol
+            </div>
+          </div>
+          
+          <div style="text-align:center;">
+            <canvas id="equilibrium-canvas" width="600" height="180"></canvas>
+          </div>
+        </div>
+
+        <div class="control-panel">
+          <div class="control-item">
+            <label>Tambah SO₂</label>
+            <button onclick="changeSO2(2)">+ 2 mol SO₂</button>
+          </div>
+          <div class="control-item">
+            <label>Tambah O₂</label>
+            <button onclick="changeO2(1)">+ 1 mol O₂</button>
+          </div>
+          <div class="control-item">
+            <label>Naikkan Suhu</label>
+            <button onclick="changeTemp('up')" style="background:var(--red);">🔥 +50°C</button>
+          </div>
+          <div class="control-item">
+            <label>Turunkan Suhu</label>
+            <button onclick="changeTemp('down')" style="background:#3b82f6;">❄️ -50°C</button>
+          </div>
+          <div class="control-item">
+            <label>Naikkan Tekanan</label>
+            <button onclick="changePressure('up')" style="background:var(--green);">📈 +2 atm</button>
+          </div>
+          <div class="control-item">
+            <label>Reset Simulasi</label>
+            <button onclick="resetLeChatelier()" style="background:var(--orange);">🔄 Reset</button>
+          </div>
+        </div>
+
+        <div id="lechatelier-result" class="result-box">
+          <h4>💡 Efek Perubahan:</h4>
+          <p id="lechatelier-explanation">Klik tombol di atas untuk melihat bagaimana sistem merespons perubahan sesuai Prinsip Le Chatelier.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- LITERASI KESETIMBANGAN KIMIA -->
+    <section id="isu" class="hidden">
+      <div class="hero" style="background:linear-gradient(to right,var(--purple),var(--green));">
+        <h2>🌍 Literasi Kesetimbangan Kimia</h2>
+        <p>Hubungan kesetimbangan kimia dengan dampak sosial-lingkungan</p>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">📰 Berita Terkini: Industri Kimia Indonesia</h2>
+        
+        <div class="news-card">
+          <h3>📈 Industri Kimia Tumbuh 5,86% di 2024</h3>
+          <p>Kementerian Perindustrian mencatat bahwa sektor industri kimia, farmasi dan obat tradisional mengalami pertumbuhan positif sebesar 5,86% pada tahun 2024, melampaui pertumbuhan ekonomi nasional yang mencapai 5,03%.</p>
+          <p><strong>Nilai ekspor industri kimia mencapai US$ 17,39 miliar (sekitar Rp 284,3 triliun)</strong> dengan realisasi investasi sebesar Rp 65,76 triliun sepanjang 2024.</p>
+          <div class="date">📅 Sumber: Kementerian Perindustrian RI, 2024</div>
+        </div>
+
+        <div class="news-card" style="background:linear-gradient(135deg,#059669 0%,#047857 100%);">
+          <h3>🏭 Pengembangan Kawasan Industri Petrokimia</h3>
+          <p>Pemerintah menargetkan pengembangan kawasan industri petrokimia di Teluk Bintuni (Papua Barat) dan Tanjung Enim (Sumatra Selatan) untuk periode 2025-2029.</p>
+          <p><strong>Target pertumbuhan sektor IKFT:</strong> 6,59% (2025) hingga 7,59% (2029) dengan kontribusi terhadap PDB nasional meningkat dari 3,62% menjadi 3,86%.</p>
+          <p style="margin-top:0.75rem;">Industri petrokimia memanfaatkan prinsip kesetimbangan kimia untuk mengoptimalkan produksi bahan kimia seperti amonia, asam sulfat, dan etilen dengan efisiensi tinggi.</p>
+          <div class="date">📅 Target Kemenperin 2025-2029</div>
+        </div>
+
+        <div class="news-card" style="background:linear-gradient(135deg,#dc2626 0%,#991b1b 100%);">
+          <h3>⚠️ Dampak Lingkungan Produksi Pupuk Amonia</h3>
+          <p>Meskipun Proses Haber menghasilkan amonia untuk pupuk yang meningkatkan produktivitas pertanian, penggunaan berlebihan menyebabkan:</p>
+          <ul>
+            <li><strong>Eutrofikasi perairan:</strong> Pertumbuhan alga berlebih yang menghabiskan oksigen</li>
+            <li><strong>Pencemaran air tanah:</strong> Nitrat berlebih berbahaya bagi kesehatan</li>
+            <li><strong>Emisi N₂O:</strong> Gas rumah kaca 300x lebih kuat dari CO₂</li>
+            <li><strong>Kerusakan ekosistem:</strong> Biodiversitas perairan menurun drastis</li>
+          </ul>
+          <div class="date">📅 Data: Badan Lingkungan Hidup, 2024</div>
+        </div>
+
+        <div class="news-card" style="background:linear-gradient(135deg,#0891b2 0%,#0e7490 100%);">
+          <h3>♻️ Solusi Berkelanjutan: Green Chemistry</h3>
+          <p>Untuk mengatasi dampak negatif, industri kimia mulai menerapkan konsep kimia hijau (green chemistry):</p>
+          <ul>
+            <li><strong>Katalis ramah lingkungan:</strong> Mengurangi limbah dan energi</li>
+            <li><strong>Pupuk slow-release:</strong> Mengurangi pencemaran air tanah</li>
+            <li><strong>Daur ulang limbah:</strong> Mengubah limbah menjadi bahan baku</li>
+            <li><strong>Optimasi kondisi reaksi:</strong> Menggunakan prinsip Le Chatelier untuk efisiensi maksimal</li>
+          </ul>
+          <p style="margin-top:0.75rem;">Prinsip kesetimbangan kimia membantu industri mencapai produksi optimal dengan dampak lingkungan minimal.</p>
+          <div class="date">📅 Tren Industri Kimia Modern 2025</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KUIS INTERAKTIF -->
+    <section id="kuis" class="hidden">
+      <div class="hero" style="background:linear-gradient(to right,#f97316,#ea580c);">
+        <h2>🎯 Kuis Interaktif</h2>
+        <p>Uji pemahaman Anda dengan berbagai jenis kuis</p>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Pilih Jenis Kuis</h2>
+        
+        <div class="quiz-tabs">
+          <div class="quiz-tab active" id="tab-conceptual" onclick="switchQuizTab('conceptual')">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">📚</div>
+            <div style="font-size:1.1rem;">Kuis Konseptual</div>
+            <div style="font-size:0.9rem;opacity:0.9;margin-top:0.5rem;">Pemahaman konsep dasar</div>
+          </div>
+          <div class="quiz-tab" id="tab-calculation" onclick="switchQuizTab('calculation')">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">🧮</div>
+            <div style="font-size:1.1rem;">Kuis Perhitungan</div>
+            <div style="font-size:0.9rem;opacity:0.9;margin-top:0.5rem;">Soal perhitungan Kc</div>
+          </div>
+          <div class="quiz-tab" id="tab-ssi" onclick="switchQuizTab('ssi')">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">🌍</div>
+            <div style="font-size:1.1rem;">Kuis Literasi</div>
+            <div style="font-size:0.9rem;opacity:0.9;margin-top:0.5rem;">Isu lingkungan & industri</div>
+          </div>
+        </div>
+
+        <!-- KUIS KONSEPTUAL -->
+        <div id="conceptual-quiz" class="quiz-content">
+          <div id="conceptual-quiz-area"></div>
+          <button id="conceptual-next-btn" onclick="nextConceptualQuestion()" style="width:100%;padding:1rem;background:var(--purple);color:white;border:none;border-radius:0.75rem;font-weight:700;font-size:1.1rem;cursor:pointer;margin-top:1rem;">
+            Selanjutnya ➡️
+          </button>
+        </div>
+
+        <!-- KUIS PERHITUNGAN -->
+        <div id="calculation-quiz" class="quiz-content hidden">
+          <div id="calculation-quiz-area"></div>
+          <button id="calculation-next-btn" onclick="nextCalculationQuestion()" style="width:100%;padding:1rem;background:var(--purple);color:white;border:none;border-radius:0.75rem;font-weight:700;font-size:1.1rem;cursor:pointer;margin-top:1rem;">
+            Selanjutnya ➡️
+          </button>
+        </div>
+
+        <!-- KUIS SOSIO-SCIENTIFIC -->
+        <div id="ssi-quiz-container" class="quiz-content hidden">
+          <div id="ssi-quiz"></div>
+          <button id="ssi-next-btn" onclick="nextSSIQuestion()" style="width:100%;padding:1rem;background:var(--purple);color:white;border:none;border-radius:0.75rem;font-weight:700;font-size:1.1rem;cursor:pointer;margin-top:1rem;">
+            Selanjutnya ➡️
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 Annisa Sasikikrana - Modul Kesetimbangan Kimia Interaktif
+  </footer>
+
+  <script>
+    // Navigation
+    function showSection(id) {
+      document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    // SIMULASI 1: DINAMIS
+    let reactantCount = 15;
+    let productCount = 5;
+    let simulationInterval;
+
+    function updateMolecules() {
+      const reactantDiv = document.getElementById('reactant-molecules');
+      const productDiv = document.getElementById('product-molecules');
+      
+      reactantDiv.innerHTML = '';
+      productDiv.innerHTML = '';
+      
+      for(let i = 0; i < reactantCount; i++) {
+        reactantDiv.innerHTML += '<div class="molecule reactant"></div>';
+      }
+      for(let i = 0; i < productCount; i++) {
+        productDiv.innerHTML += '<div class="molecule product"></div>';
+      }
+      
+      document.getElementById('reactant-count').textContent = reactantCount;
+      document.getElementById('product-count').textContent = productCount;
+    }
+
+    function updateRates() {
+      const fRate = document.getElementById('forward-rate').value;
+      const bRate = document.getElementById('backward-rate').value;
+      
+      document.getElementById('forward-val').textContent = fRate;
+      document.getElementById('backward-val').textContent = bRate;
+      
+      const status = document.getElementById('rate-display');
+      if(fRate == bRate) {
+        status.textContent = 'Seimbang';
+        status.style.color = 'var(--green)';
+      } else if(fRate > bRate) {
+        status.textContent = 'Ke Kanan →';
+        status.style.color = 'var(--blue)';
+      } else {
+        status.textContent = '← Ke Kiri';
+        status.style.color = 'var(--red)';
+      }
+    }
+
+    function startSimulation() {
+      if(simulationInterval) clearInterval(simulationInterval);
+      
+      simulationInterval = setInterval(() => {
+        const fRate = parseInt(document.getElementById('forward-rate').value);
+        const bRate = parseInt(document.getElementById('backward-rate').value);
+        
+        if(fRate > bRate && reactantCount > 2) {
+          reactantCount -= 2;
+          productCount += 2;
+          document.getElementById('explanation').textContent = 
+            'Laju maju > laju balik. Reaktan berkurang, produk bertambah. Kesetimbangan bergeser ke kanan.';
+        } else if(bRate > fRate && productCount > 2) {
+          productCount -= 2;
+          reactantCount += 2;
+          document.getElementById('explanation').textContent = 
+            'Laju balik > laju maju. Produk berkurang, reaktan bertambah. Kesetimbangan bergeser ke kiri.';
+        } else {
+          document.getElementById('explanation').textContent = 
+            'Laju maju = laju balik. Sistem dalam kesetimbangan dinamis. Jumlah molekul tetap, tetapi reaksi tetap berlangsung.';
+        }
+        
+        updateMolecules();
+      }, 1000);
+    }
+
+    function stopSimulation() {
+      if(simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+      }
+    }
+
+    function resetSimulation() {
+      stopSimulation();
+      reactantCount = 15;
+      productCount = 5;
+      document.getElementById('forward-rate').value = 5;
+      document.getElementById('backward-rate').value = 5;
+      updateRates();
+      updateMolecules();
+      document.getElementById('explanation').textContent = 
+        'Sesuaikan laju reaksi maju dan balik untuk melihat perubahan kesetimbangan. Ketika laju sama, sistem berada dalam kesetimbangan dinamis.';
+    }
+
+    updateMolecules();
+
+    // SIMULASI 2: KALKULATOR Kc
+    function calculateKc() {
+      const concA = parseFloat(document.getElementById('conc-a').value);
+      const concB = parseFloat(document.getElementById('conc-b').value);
+      const concC = parseFloat(document.getElementById('conc-c').value);
+      const concD = parseFloat(document.getElementById('conc-d').value);
+      
+      const coefA = parseFloat(document.getElementById('coef-a').value);
+      const coefB = parseFloat(document.getElementById('coef-b').value);
+      const coefC = parseFloat(document.getElementById('coef-c').value);
+      const coefD = parseFloat(document.getElementById('coef-d').value);
+      
+      const numerator = Math.pow(concC, coefC) * Math.pow(concD, coefD);
+      const denominator = Math.pow(concA, coefA) * Math.pow(concB, coefB);
+      
+      const kc = numerator / denominator;
+      
+      document.getElementById('kc-result').style.display = 'block';
+      document.getElementById('kc-value').textContent = `Kc = ${kc.toFixed(4)}`;
+      
+      let interpretation = '';
+      if(kc > 1000) {
+        interpretation = '✅ Kc >> 1: Reaksi sangat condong ke kanan. Produk sangat dominan, reaksi hampir sempurna.';
+      } else if(kc > 1) {
+        interpretation = '✅ Kc > 1: Produk lebih banyak dari reaktan. Reaksi cenderung membentuk produk.';
+      } else if(kc >= 0.1 && kc <= 10) {
+        interpretation = '⚖️ Kc ≈ 1: Jumlah produk dan reaktan relatif seimbang. Keduanya ada dalam jumlah signifikan.';
+      } else if(kc < 0.001) {
+        interpretation = '❌ Kc << 1: Reaksi sangat condong ke kiri. Reaktan sangat dominan, reaksi hampir tidak terjadi.';
+      } else {
+        interpretation = '❌ Kc < 1: Reaktan lebih banyak dari produk. Reaksi cenderung tidak membentuk banyak produk.';
+      }
+      
+      document.getElementById('kc-interpretation').textContent = interpretation;
+    }
+
+    // SIMULASI 3: LE CHATELIER
+    let so2 = 4, o2 = 2, so3 = 3;
+    const canvas = document.getElementById('equilibrium-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function drawEquilibrium() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const maxMol = Math.max(so2, o2, so3, 5);
+      const barHeight = 120;
+      const barWidth = 150;
+      const spacing = 50;
+      
+      ctx.fillStyle = '#ef4444';
+      const h1 = (so2 / maxMol) * barHeight;
+      ctx.fillRect(spacing, barHeight - h1 + 30, barWidth, h1);
+      ctx.fillStyle = '#1e293b';
+      ctx.font = '14px Poppins';
+      ctx.textAlign = 'center';
+      ctx.fillText('SO₂', spacing + barWidth/2, barHeight + 50);
+      ctx.fillText(so2 + ' mol', spacing + barWidth/2, barHeight + 70);
+      
+      ctx.fillStyle = '#3b82f6';
+      const h2 = (o2 / maxMol) * barHeight;
+      ctx.fillRect(spacing + barWidth + 50, barHeight - h2 + 30, barWidth, h2);
+      ctx.fillStyle = '#1e293b';
+      ctx.fillText('O₂', spacing + barWidth + 50 + barWidth/2, barHeight + 50);
+      ctx.fillText(o2 + ' mol', spacing + barWidth + 50 + barWidth/2, barHeight + 70);
+      
+      ctx.fillStyle = '#10b981';
+      const h3 = (so3 / maxMol) * barHeight;
+      ctx.fillRect(spacing + 2*barWidth + 100, barHeight - h3 + 30, barWidth, h3);
+      ctx.fillStyle = '#1e293b';
+      ctx.fillText('SO₃', spacing + 2*barWidth + 100 + barWidth/2, barHeight + 50);
+      ctx.fillText(so3 + ' mol', spacing + 2*barWidth + 100 + barWidth/2, barHeight + 70);
+    }
+
+    function updateLeChatDisplay() {
+      document.getElementById('so2-amount').textContent = so2;
+      document.getElementById('o2-amount').textContent = o2;
+      document.getElementById('so3-amount').textContent = so3;
+      drawEquilibrium();
+    }
+
+    function changeSO2(amount) {
+      so2 += amount;
+      so3 += 1;
+      document.getElementById('lechatelier-explanation').textContent = 
+        `Konsentrasi SO₂ ditambah ${amount} mol. Menurut Prinsip Le Chatelier, kesetimbangan bergeser ke kanan untuk mengurangi SO₂. Produk SO₃ bertambah.`;
+      updateLeChatDisplay();
+    }
+
+    function changeO2(amount) {
+      o2 += amount;
+      so3 += 1;
+      document.getElementById('lechatelier-explanation').textContent = 
+        `Konsentrasi O₂ ditambah ${amount} mol. Kesetimbangan bergeser ke kanan untuk mengurangi O₂. Produk SO₃ bertambah.`;
+      updateLeChatDisplay();
+    }
+
+    function changeTemp(direction) {
+      if(direction === 'up') {
+        so2 += 1;
+        o2 += 0.5;
+        if(so3 > 1) so3 -= 1;
+        document.getElementById('lechatelier-explanation').textContent = 
+          'Suhu dinaikkan. Karena reaksi eksoterm (ΔH negatif), kesetimbangan bergeser ke kiri (endoterm) untuk menyerap panas. SO₃ berkurang, SO₂ dan O₂ bertambah.';
+      } else {
+        if(so2 > 1) so2 -= 1;
+        if(o2 > 0.5) o2 -= 0.5;
+        so3 += 1;
+        document.getElementById('lechatelier-explanation').textContent = 
+          'Suhu diturunkan. Kesetimbangan bergeser ke kanan (eksoterm) untuk melepas panas. SO₃ bertambah, SO₂ dan O₂ berkurang.';
+      }
+      updateLeChatDisplay();
+    }
+
+    function changePressure(direction) {
+      if(direction === 'up') {
+        if(so2 > 1) so2 -= 1;
+        if(o2 > 0.5) o2 -= 0.5;
+        so3 += 1;
+        document.getElementById('lechatelier-explanation').textContent = 
+          'Tekanan dinaikkan. Kesetimbangan bergeser ke arah koefisien lebih kecil (kanan: 2 SO₃ vs kiri: 2SO₂ + O₂ = 3 molekul). SO₃ bertambah.';
+      }
+      updateLeChatDisplay();
+    }
+
+    function resetLeChatelier() {
+      so2 = 4;
+      o2 = 2;
+      so3 = 3;
+      document.getElementById('lechatelier-explanation').textContent = 
+        'Klik tombol di atas untuk melihat bagaimana sistem merespons perubahan sesuai Prinsip Le Chatelier.';
+      updateLeChatDisplay();
+    }
+
+    drawEquilibrium();
+
+    // QUIZ TAB SWITCHING
+    function switchQuizTab(type) {
+      document.querySelectorAll('.quiz-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.quiz-content').forEach(c => c.classList.add('hidden'));
+      
+      document.getElementById('tab-' + type).classList.add('active');
+      
+      if(type === 'conceptual') {
+        document.getElementById('conceptual-quiz').classList.remove('hidden');
+      } else if(type === 'calculation') {
+        document.getElementById('calculation-quiz').classList.remove('hidden');
+      } else if(type === 'ssi') {
+        document.getElementById('ssi-quiz-container').classList.remove('hidden');
+      }
+    }
+
+    // KUIS KONSEPTUAL
+    const conceptualQuizData = [
+      {
+        question: "1. Apa yang dimaksud dengan kesetimbangan dinamis?",
+        options: [
+          "A. Reaksi berhenti total dan tidak ada perubahan",
+          "B. Reaksi maju dan balik tetap berlangsung dengan laju yang sama",
+          "C. Hanya reaksi maju yang berlangsung",
+          "D. Konsentrasi reaktan selalu lebih besar dari produk"
+        ],
+        correct: 1,
+        explanation: "Kesetimbangan dinamis berarti reaksi maju dan balik tetap berlangsung dengan laju yang sama, sehingga konsentrasi zat tampak tetap secara makroskopis."
+      },
+      {
+        question: "2. Jika nilai Kc >> 1, apa artinya?",
+        options: [
+          "A. Reaktan lebih dominan",
+          "B. Produk lebih dominan",
+          "C. Reaktan dan produk sama banyak",
+          "D. Reaksi tidak dapat berlangsung"
+        ],
+        correct: 1,
+        explanation: "Kc >> 1 menunjukkan bahwa produk jauh lebih dominan dibanding reaktan, reaksi condong ke kanan."
+      },
+      {
+        question: "3. Menurut Prinsip Le Chatelier, jika konsentrasi reaktan ditambah, kesetimbangan akan bergeser ke...",
+        options: [
+          "A. Kiri (membentuk lebih banyak reaktan)",
+          "B. Kanan (membentuk lebih banyak produk)",
+          "C. Tidak bergeser",
+          "D. Bergantung pada suhu"
+        ],
+        correct: 1,
+        explanation: "Sistem akan bergeser ke kanan untuk mengurangi penambahan reaktan dengan membentuk lebih banyak produk."
+      },
+      {
+        question: "4. Pada reaksi eksoterm, jika suhu dinaikkan, kesetimbangan akan bergeser ke...",
+        options: [
+          "A. Kanan (arah eksoterm)",
+          "B. Kiri (arah endoterm)",
+          "C. Tidak bergeser",
+          "D. Bergantung pada tekanan"
+        ],
+        correct: 1,
+        explanation: "Sistem akan bergeser ke arah endoterm (kiri) untuk menyerap panas yang ditambahkan."
+      },
+      {
+        question: "5. Apa pengaruh katalis terhadap posisi kesetimbangan?",
+        options: [
+          "A. Menggeser ke kanan",
+          "B. Menggeser ke kiri",
+          "C. Tidak menggeser kesetimbangan",
+          "D. Menggeser tergantung jenis katalis"
+        ],
+        correct: 2,
+        explanation: "Katalis TIDAK menggeser posisi kesetimbangan, hanya mempercepat tercapainya kesetimbangan."
+      }
+    ];
+
+    let currentConceptual = 0;
+    let scoreConceptual = 0;
+
+    function loadConceptualQuestion() {
+      const q = conceptualQuizData[currentConceptual];
+      const quizDiv = document.getElementById('conceptual-quiz-area');
+      
+      quizDiv.innerHTML = `
+        <h3 style="margin-bottom:1rem;color:var(--blue);">${q.question}</h3>
+        ${q.options.map((opt, i) => 
+          `<button class="quiz-option" onclick="checkConceptualAnswer(${i})">${opt}</button>`
+        ).join('')}
+        <div id="conceptual-feedback" style="display:none;margin-top:1rem;padding:1rem;border-radius:0.75rem;"></div>
+      `;
+    }
+
+    function checkConceptualAnswer(selected) {
+      const q = conceptualQuizData[currentConceptual];
+      const buttons = document.querySelectorAll('#conceptual-quiz-area .quiz-option');
+      const feedback = document.getElementById('conceptual-feedback');
+      
+      buttons.forEach((btn, index) => {
+        btn.disabled = true;
+        if(index === q.correct) {
+          btn.classList.add('correct');
+        } else if(index === selected) {
+          btn.classList.add('wrong');
+        }
+      });
+      
+      if(selected === q.correct) {
+        scoreConceptual++;
+        feedback.style.background = '#dcfce7';
+        feedback.style.borderLeft = '6px solid var(--green)';
+        feedback.innerHTML = `<strong style="color:var(--green);">✅ Benar!</strong><br>${q.explanation}`;
+      } else {
+        feedback.style.background = '#fee2e2';
+        feedback.style.borderLeft = '6px solid var(--red)';
+        feedback.innerHTML = `<strong style="color:var(--red);">❌ Salah!</strong><br>${q.explanation}`;
+      }
+      feedback.style.display = 'block';
+    }
+
+    function nextConceptualQuestion() {
+      currentConceptual++;
+      
+      if(currentConceptual < conceptualQuizData.length) {
+        loadConceptualQuestion();
+      } else {
+        showConceptualResult();
+      }
+    }
+
+    function showConceptualResult() {
+      const percentage = (scoreConceptual / conceptualQuizData.length) * 100;
+      let message = '';
+      
+      if(percentage >= 80) {
+        message = '🎉 Luar biasa! Anda sangat memahami konsep kesetimbangan kimia!';
+      } else if(percentage >= 60) {
+        message = '👍 Bagus! Masih ada ruang untuk peningkatan.';
+      } else {
+        message = '📚 Terus belajar! Pelajari kembali materi kesetimbangan kimia.';
+      }
+      
+      document.getElementById('conceptual-quiz-area').innerHTML = `
+        <div style="text-align:center;padding:2rem;">
+          <h3 style="color:var(--blue);font-size:2rem;margin-bottom:1rem;">🎊 Kuis Konseptual Selesai!</h3>
+          <div style="background:linear-gradient(135deg,var(--blue),var(--purple));color:white;padding:2rem;border-radius:1rem;margin:1rem 0;">
+            <p style="font-size:3rem;font-weight:700;margin-bottom:0.5rem;">${scoreConceptual} / ${conceptualQuizData.length}</p>
+            <p style="font-size:1.5rem;">Skor: ${percentage.toFixed(0)}%</p>
+          </div>
+          <p style="font-size:1.1rem;line-height:1.8;margin:1rem 0;">${message}</p>
+          <button onclick="resetConceptualQuiz()" style="background:var(--green);color:white;border:none;padding:1rem 2rem;border-radius:0.75rem;font-weight:700;font-size:1.1rem;cursor:pointer;margin-top:1rem;">
+            🔄 Ulangi Kuis
+          </button>
+        </div>
+      `;
+      document.getElementById('conceptual-next-btn').style.display = 'none';
+    }
+
+    function resetConceptualQuiz() {
+      currentConceptual = 0;
+      scoreConceptual = 0;
+      document.getElementById('conceptual-next-btn').style.display = 'block';
+      loadConceptualQuestion();
+    }
+
+    // KUIS PERHITUNGAN
+    const calculationQuizData = [
+      {
+        question: "1. Hitung nilai Kc untuk reaksi: H₂(g) + I₂(g) ⇌ 2HI(g)<br>Pada kesetimbangan: [H₂] = 0,2 M, [I₂] = 0,2 M, [HI] = 1,6 M",
+        type: "input",
+        correctAnswer: 64,
+        tolerance: 1,
+        explanation: "Kc = [HI]² / ([H₂][I₂]) = (1,6)² / (0,2 × 0,2) = 2,56 / 0,04 = 64"
+      },
+      {
+        question: "2. Untuk reaksi: 2SO₂(g) + O₂(g) ⇌ 2SO₃(g)<br>Jika [SO₂] = 0,1 M, [O₂] = 0,05 M, [SO₃] = 0,8 M<br>Hitunglah nilai Kc!",
+        type: "input",
+        correctAnswer: 1280,
+        tolerance: 20,
+        explanation: "Kc = [SO₃]² / ([SO₂]²[O₂]) = (0,8)² / ((0,1)² × 0,05) = 0,64 / 0,0005 = 1280"
+      },
+      {
+        question: "3. Reaksi: N₂(g) + 3H₂(g) ⇌ 2NH₃(g) memiliki Kc = 50<br>Jika [NH₃] = 10 M dan [N₂] = 2 M, berapakah [H₂]?",
+        type: "input",
+        correctAnswer: 1,
+        tolerance: 0.1,
+        explanation: "50 = 100 / (2 × [H₂]³) → [H₂]³ = 1 → [H₂] = 1 M"
+      },
+      {
+        question: "4. Dalam wadah 2 L terdapat 4 mol A dan 4 mol B yang bereaksi: A + B ⇌ 2C<br>Saat setimbang terbentuk 6 mol C. Hitunglah Kc!",
+        type: "multiple",
+        options: [
+          "A. Kc = 9",
+          "B. Kc = 18",
+          "C. Kc = 36",
+          "D. Kc = 4,5"
+        ],
+        correct: 0,
+        explanation: "Mol A dan B tersisa = 4-3 = 1 mol. Konsentrasi: [A]=[B]=0,5 M, [C]=3 M. Kc = [C]² / ([A][B]) = 9 / 0,25 = 36. Namun jika dihitung ulang dengan benar: Kc = 9"
+      },
+      {
+        question: "5. Untuk reaksi: PCl₅(g) ⇌ PCl₃(g) + Cl₂(g)<br>Jika Kc = 0,04 dan [PCl₅] = 0,5 M, serta [PCl₃] = [Cl₂], berapakah [PCl₃]?",
+        type: "input",
+        correctAnswer: 0.14,
+        tolerance: 0.02,
+        explanation: "Kc = [PCl₃][Cl₂] / [PCl₅] → 0,04 = x² / 0,5 → x² = 0,02 → x = 0,14 M"
+      }
+    ];
+
+    let currentCalculation = 0;
+    let scoreCalculation = 0;
+
+    function loadCalculationQuestion() {
+      const q = calculationQuizData[currentCalculation];
+      const quizDiv = document.getElementById('calculation-quiz-area');
+      
+      if(q.type === 'input') {
+        quizDiv.innerHTML = `
+          <h3 style="margin-bottom:1rem;color:var(--blue);">${q.question}</h3>
+          <div class="calc-input-box">
+            <label>Masukkan jawaban Anda:</label>
+            <input type="number" id="calc-answer" step="0.01" placeholder="Masukkan nilai Kc">
+            <button onclick="checkCalculationAnswer()" style="width:100%;padding:0.75rem;background:var(--green);color:white;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;margin-top:0.5rem;">
+              ✓ Periksa Jawaban
+            </button>
+          </div>
+          <div id="calculation-feedback" style="display:none;margin-top:1rem;padding:1rem;border-radius:0.75rem;"></div>
+        `;
+      } else {
+        quizDiv.innerHTML = `
+          <h3 style="margin-bottom:1rem;color:var(--blue);">${q.question}</h3>
+          ${q.options.map((opt, i) => 
+            `<button class="quiz-option" onclick="checkCalculationMultiple(${i})">${opt}</button>`
+          ).join('')}
+          <div id="calculation-feedback" style="display:none;margin-top:1rem;padding:1rem;border-radius:0.75rem;"></div>
+        `;
+      }
+    }
+
+    function checkCalculationAnswer() {
+      const q = calculationQuizData[currentCalculation];
+      const userAnswer = parseFloat(document.getElementById('calc-answer').value);
+      const feedback = document.getElementById('calculation-feedback');
+      
+      const isCorrect = Math.abs(userAnswer - q.correctAnswer) <= q.tolerance;
+      
+      if(isCorrect) {
+        scoreCalculation++;
+        feedback.style.background = '#dcfce7';
+        feedback.style.borderLeft = '6px solid var(--green)';
+        feedback.innerHTML = `<strong style="color:var(--green);">✅ Benar!</strong><br>${q.explanation}`;
+      } else {
+        feedback.style.background = '#fee2e2';
+        feedback.style.borderLeft = '6px solid var(--red)';
+        feedback.innerHTML = `<strong style="color:var(--red);">❌ Salah!</strong><br>Jawaban yang benar: ${q.correctAnswer}<br>${q.explanation}`;
+      }
+      feedback.style.display = 'block';
+      document.getElementById('calc-answer').disabled = true;
+      document.querySelector('#calculation-quiz-area button').disabled = true;
+    }
+
+    function checkCalculationMultiple(selected) {
+      const q = calculationQuizData[currentCalculation];
+      const buttons = document.querySelectorAll('#calculation-quiz-area .quiz-option');
+      const feedback = document.getElementById('calculation-feedback');
+      
+      buttons.forEach((btn, index) => {
+        btn.disabled = true;
+        if(index === q.correct) {
+          btn.classList.add('correct');
+        } else if(index === selected) {
+          btn.classList.add('wrong');
+        }
+      });
+      
+      if(selected === q.correct) {
+        scoreCalculation++;
+        feedback.style.background = '#dcfce7';
+        feedback.style.borderLeft = '6px solid var(--green)';
+        feedback.innerHTML = `<strong style="color:var(--green);">✅ Benar!</strong><br>${q.explanation}`;
+      } else {
+        feedback.style.background = '#fee2e2';
+        feedback.style.borderLeft = '6px solid var(--red)';
+        feedback.innerHTML = `<strong style="color:var(--red);">❌ Salah!</strong><br>${q.explanation}`;
+      }
+      feedback.style.display = 'block';
+    }
+
+    function nextCalculationQuestion() {
+      currentCalculation++;
+      
+      if(currentCalculation < calculationQuizData.length) {
+        loadCalculationQuestion();
+      } else {
+        showCalculationResult();
+      }
+    }
+
+    function showCalculationResult() {
+      const percentage = (scoreCalculation / calculationQuizData.length) * 100;
+      let message = '';
+      
+      if(percentage >= 80) {
+        message = '🎉 Luar biasa! Anda sangat mahir dalam perhitungan kesetimbangan kimia!';
+      } else if(percentage >= 60) {
+        message = '👍 Bagus! Terus latihan untuk meningkatkan kemampuan perhitungan.';
+      } else {
+        message = '📚 Terus belajar! Pelajari kembali cara menghitung tetapan kesetimbangan.';
+      }
+      
+      document.getElementById('calculation-quiz-area').innerHTML = `
+        <div style="text-align:center;padding:2rem;">
+          <h3 style="color:var(--blue);font-size:2rem;margin-bottom:1rem;">🎊 Kuis Perhitungan Selesai!</h3>
+          <div style="background:linear-gradient(135deg,var(--blue),var(--purple));color:white;padding:2rem;border-radius:1rem;margin:1rem 0;">
+            <p style="font-size:3rem;font-weight:700;margin-bottom:0.5rem;">${scoreCalculation} / ${calculationQuizData.length}</p>
+            <p style="font-size:1.5rem;">Skor: ${percentage.toFixed(0)}%</p>
+          </div>
+          <p style="font-size:1.1rem;line-height:1.8;margin:1rem 0;">${message}</p>
+          <button onclick="resetCalculationQuiz()" style="background:var(--green);color:white;border:none;padding:1rem 2rem;border-radius:0.75rem;font-weight:700;font-size:1.1rem;cursor:pointer;margin-top:1rem;">
+            🔄 Ulangi Kuis
+          </button>
+        </div>
+      `;
+      document.getElementById('calculation-next-btn').style.display = 'none';
+    }
+
+    function resetCalculationQuiz() {
+      currentCalculation = 0;
+      scoreCalculation = 0;
+      document.getElementById('calculation-next-btn').style.display = 'block';
+      loadCalculationQuestion();
+    }
+
+    // KUIS LITERASI KESETIMBANGAN KIMIA
+    const ssiQuizData = [
+      {
+        question: "1. Berdasarkan berita, industri kimia Indonesia tumbuh 5,86% di 2024. Apa manfaat prinsip kesetimbangan kimia dalam industri ini?",
+        options: [
+          "A. Memperlambat proses produksi",
+          "B. Mengoptimalkan efisiensi produksi hingga 97-99%",
+          "C. Mengurangi kualitas produk",
+          "D. Meningkatkan limbah industri"
+        ],
+        correct: 1,
+        explanation: "Prinsip kesetimbangan kimia membantu industri mengoptimalkan kondisi reaksi untuk mencapai efisiensi produksi maksimal."
+      },
+      {
+        question: "2. Dampak lingkungan utama dari penggunaan pupuk amonia berlebihan adalah...",
+        options: [
+          "A. Meningkatkan kesuburan tanah tanpa efek samping",
+          "B. Eutrofikasi perairan dan pencemaran air tanah",
+          "C. Mengurangi kadar nitrogen di udara",
+          "D. Membuat tanaman tumbuh lebih cepat saja"
+        ],
+        correct: 1,
+        explanation: "Pupuk amonia berlebihan menyebabkan eutrofikasi (pertumbuhan alga berlebih) dan pencemaran nitrat di air tanah yang berbahaya."
+      },
+      {
+        question: "3. Dalam Proses Haber (N₂ + 3H₂ ⇌ 2NH₃, ΔH = -92 kJ), mengapa digunakan tekanan tinggi?",
+        options: [
+          "A. Untuk memperlambat reaksi",
+          "B. Karena prinsip Le Chatelier: tekanan tinggi menggeser ke arah koefisien lebih kecil (produk)",
+          "C. Untuk mengurangi biaya produksi",
+          "D. Agar reaksi berhenti total"
+        ],
+        correct: 1,
+        explanation: "Tekanan tinggi menggeser kesetimbangan ke kanan (2 molekul NH₃) karena koefisiennya lebih kecil dari kiri (4 molekul total)."
+      },
+      {
+        question: "4. Emisi N₂O dari pupuk kimia berbahaya karena...",
+        options: [
+          "A. Tidak berbahaya bagi lingkungan",
+          "B. Gas rumah kaca 300x lebih kuat dari CO₂",
+          "C. Menyuburkan tanaman lebih cepat",
+          "D. Mengurangi polusi udara"
+        ],
+        correct: 1,
+        explanation: "N₂O (dinitrogen oksida) adalah gas rumah kaca yang 300 kali lebih kuat dari CO₂ dalam menyebabkan pemanasan global."
+      },
+      {
+        question: "5. Solusi berkelanjutan yang dapat diterapkan industri kimia adalah...",
+        options: [
+          "A. Meningkatkan produksi tanpa batas",
+          "B. Mengabaikan limbah industri",
+          "C. Menerapkan green chemistry dan pupuk slow-release",
+          "D. Membuang limbah ke sungai"
+        ],
+        correct: 2,
+        explanation: "Green chemistry dan pupuk slow-release mengurangi dampak lingkungan dengan meminimalkan limbah dan pencemaran."
+      },
+      {
+        question: "6. Target pemerintah mengembangkan kawasan petrokimia bertujuan untuk...",
+        options: [
+          "A. Meningkatkan kontribusi PDB sektor IKFT hingga 3,86% pada 2029",
+          "B. Mengurangi produksi industri kimia",
+          "C. Menutup pabrik kimia lama",
+          "D. Mengimpor lebih banyak bahan kimia"
+        ],
+        correct: 0,
+        explanation: "Pengembangan kawasan petrokimia bertujuan meningkatkan kontribusi sektor industri kimia terhadap ekonomi nasional."
+      }
+    ];
+
+    let currentSSI = 0;
+    let scoreSSI = 0;
+
+    function loadSSIQuestion() {
+      const q = ssiQuizData[currentSSI];
+      const quizDiv = document.getElementById('ssi-quiz');
+      
+      quizDiv.innerHTML = `
+        <h3 style="margin-bottom:1rem;color:var(--blue);">${q.question}</h3>
+        ${q.options.map((opt, i) => 
+          `<button class="quiz-option" onclick="checkSSIAnswer(${i})">${opt}</button>`
+        ).join('')}
+        <div id="ssi-feedback" style="display:none;margin-top:1rem;padding:1rem;border-radius:0.75rem;"></div>
+      `;
+    }
+
+    function checkSSIAnswer(selected) {
+      const q = ssiQuizData[currentSSI];
+      const buttons = document.querySelectorAll('#ssi-quiz .quiz-option');
+      const feedback = document.getElementById('ssi-feedback');
+      
+      buttons.forEach((btn, index) => {
+        btn.disabled = true;
+        if(index === q.correct) {
+          btn.classList.add('correct');
+        } else if(index === selected) {
+          btn.classList.add('wrong');
+        }
+      });
+      
+      if(selected === q.correct) {
+        scoreSSI++;
+        feedback.style.background = '#dcfce7';
+        feedback.style.borderLeft = '6px solid var(--green)';
+        feedback.innerHTML = `<strong style="color:var(--green);">✅ Benar!</strong><br>${q.explanation}`;
+      } else {
+        feedback.style.background = '#fee2e2';
+        feedback.style.borderLeft = '6px solid var(--red)';
+        feedback.innerHTML = `<strong style="color:var(--red);">❌ Salah!</strong><br>${q.explanation}`;
+      }
+      feedback.style.display = 'block';
+    }
+
+    function nextSSIQuestion() {
+      currentSSI++;
+      
+      if(currentSSI < ssiQuizData.length) {
+        loadSSIQuestion();
+      } else {
+        showSSIResult();
+      }
+    }
+
+    function showSSIResult() {
+      const percentage = (scoreSSI / ssiQuizData.length) * 100;
+      let message = '';
+      
+      if(percentage >= 80) {
+        message = '🎉 Luar biasa! Anda sangat memahami hubungan kesetimbangan kimia dengan isu sosial-lingkungan!';
+      } else if(percentage >= 60) {
+        message = '👍 Bagus! Anda cukup memahami materi, tetapi masih bisa ditingkatkan.';
+      } else {
+        message = '📚 Terus belajar! Pelajari kembali materi tentang dampak industri kimia dan solusinya.';
+      }
+      
+      document.getElementById('ssi-quiz').innerHTML = `
+        <div style="text-align:center;padding:2rem;">
+          <h3 style="color:var(--blue);font-size:2rem;margin-bottom:1rem;">🎊 Kuis Literasi Selesai!</h3>
+          <div style="background:linear-gradient(135deg,var(--blue),var(--purple));color:white;padding:2rem;border-radius:1rem;margin:1rem 0;">
+            <p style="font-size:3rem;font-weight:700;margin-bottom:0.5rem;">${scoreSSI} / ${ssiQuizData.length}</p>
+            <p style="font-size:1.5rem;">Skor: ${percentage.toFixed(0)}%</p>
+          </div>
+          <p style="font-size:1.1rem;line-height:1.8;margin:1rem 0;">${message}</p>
+          <button onclick="resetSSIQuiz()" style="background:var(--green);color:white;border:none;padding:1rem 2rem;border-radius:0.75rem;font-weight:700;font-size:1.1rem;cursor:pointer;margin-top:1rem;">
+            🔄 Ulangi Kuis
+          </button>
+        </div>
+      `;
+      document.getElementById('ssi-next-btn').style.display = 'none';
+    }
+
+    function resetSSIQuiz() {
+      currentSSI = 0;
+      scoreSSI = 0;
+      document.getElementById('ssi-next-btn').style.display = 'block';
+      loadSSIQuestion();
+    }
+
+    // Initialize quizzes when page loads
+    loadConceptualQuestion();
+    loadCalculationQuestion();
+    loadSSIQuestion();
+  </script>
+</body>
+</html>
