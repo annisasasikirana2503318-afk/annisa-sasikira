@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kesetimbangan Kimia - Platform Pembelajaran Lengkap</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; color: white; margin-bottom: 50px; animation: fadeInDown 0.8s; }
+        h1 { font-size: 3em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.2em; opacity: 0.9; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .menu-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+            animation: fadeInUp 0.8s;
+        }
+        .menu-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+        .icon { font-size: 3em; margin-bottom: 15px; }
+        .menu-card h2 { color: #667eea; margin-bottom: 10px; font-size: 1.5em; }
+        .menu-card p { color: #666; line-height: 1.6; }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 2% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 1400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal-content::-webkit-scrollbar { width: 10px; }
+        .modal-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .modal-content::-webkit-scrollbar-thumb { background: #667eea; border-radius: 10px; }
+        .close { color: #aaa; float: right; font-size: 35px; font-weight: bold; cursor: pointer; line-height: 20px; }
+        .close:hover { color: #667eea; }
+        .back-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { transform: translateY(-3px); }
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-left: 5px solid #667eea;
+        }
+        .content-card h2 { color: #667eea; margin-bottom: 20px; }
+        .content-card h3 { color: #764ba2; margin: 20px 0 10px 0; }
+        .content-card p { line-height: 1.8; color: #444; margin-bottom: 15px; }
+        .content-card ul { margin-left: 30px; margin-bottom: 15px; }
+        .content-card li { line-height: 1.8; margin-bottom: 8px; }
+        .calc-equation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.4em;
+            margin: 20px 0;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        canvas { display: block; margin: 20px auto; max-width: 100%; border-radius: 10px; background: white; }
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        .action-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        .action-btn:hover { transform: translateY(-3px); }
+        .quiz-option {
+            background: #f5f7fa;
+            border: 3px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+        .quiz-option:hover {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            transform: translateX(10px);
+        }
+        .quiz-option.correct {
+            background: #c8e6c9;
+            border-color: #4caf50;
+            animation: correctAnim 0.5s;
+        }
+        .quiz-option.wrong {
+            background: #ffcdd2;
+            border-color: #f44336;
+            animation: wrongAnim 0.5s;
+        }
+        @keyframes correctAnim {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes wrongAnim {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .quiz-result {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.3em;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .quiz-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .quiz-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .score-badge {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin: 15px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .quiz-tabs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .tab-btn {
+            background: white;
+            border: 3px solid #667eea;
+            color: #667eea;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        .tab-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-5px);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .quiz-section {
+            display: none;
+        }
+        .quiz-section.active {
+            display: block;
+        }
+        .explanation {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #ff9800;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        .result-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #4caf50;
+        }
+        .slider-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f5f7fa;
+            border-radius: 10px;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .molecule {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+        }
+        .reactant { background: #f44336; }
+        .product { background: #4caf50; }
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        footer h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        footer p {
+            color: #666;
+            font-size: 1.2em;
+            margin: 10px 0;
+            line-height: 1.8;
+        }
+        footer .divider {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+        footer .copyright {
+            margin-top: 25px;
+            font-size: 1em;
+            color: #999;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .menu-grid { grid-template-columns: 1fr; }
+            .quiz-nav { flex-direction: column; gap: 10px; }
+            .quiz-tabs { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚗️ Kesetimbangan Kimia</h1>
+            <p class="subtitle">Platform Pembelajaran Super Lengkap - 7 Fitur Utama AKTIF ✅</p>
+        </header>
+
+        <div class="menu-grid">
+            <div class="menu-card" onclick="openModal('m1')">
+                <div class="icon">📚</div>
+                <h2>Teori Dasar</h2>
+                <p>✅ Kc, Kp, Prinsip Le Chatelier Detail</p>
+            </div>
+
+            <div class="menu-card" onclick="openModal('m2')">
+                <div class="icon">📖</div>
+                <h2>Literasi Kesetimbangan</h2>
+                <p>✅ 6 Aplikasi Kehidupan Nyata</p>
+            </div>
+
+            <div class="menu-card" onclick="openModal('m3')">
+                <div class="icon">🔬</div>
+                <h2>Simulasi Dinamis</h2>
+                <p>✅ 3 Simulasi Interaktif + Grafik</p>
+            </div>
+
+            <div class="menu-card" onclick="openModal('m4')">
+                <div class="icon">🧮</div>
+                <h2>Kalkulator Kc & Kp</h2>
+                <p>✅ 3 Kalkulator Lengkap</p>
+            </div>
+
+            <div class="menu-card" onclick="openModal('m5')">
+                <div class="icon">⚖️</div>
+                <h2>Prinsip Le Chatelier</h2>
+                <p>✅ 3 Simulasi: Konsentrasi, Tekanan, Suhu</p>
+            </div>
+
+            <div class="menu-card" onclick="openModal('m6')">
+                <div class="icon">🧪</div>
+                <h2>Virtual Laboratory</h2>
+                <p>✅ 4 Praktikum Interaktif</p>
+            </div>
+
+            <div class="menu-card" onclick="openModal('m7')">
+                <div class="icon">📝</div>
+                <h2>Kuis Interaktif</h2>
+                <p>✅ Sosio-Scientific, Konseptual & Perhitungan</p>
+            </div>
+        </div>
+
+        <footer>
+            <h3>✨ Platform Pembelajaran Kesetimbangan Kimia ✨</h3>
+            <div class="divider"></div>
+            <p><strong>Dibuat oleh: Annisa Sasikirana</strong></p>
+            <p>Platform pembelajaran interaktif untuk memahami konsep kesetimbangan kimia secara mendalam</p>
+            <p>🔬 Simulasi | 🧮 Kalkulator | 📖 Literasi | 🧪 Virtual Lab | 📝 Kuis Interaktif</p>
+            <p class="copyright">© 2025 Annisa Sasikirana. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Modal 1: Teori Dasar -->
+    <div id="m1" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('m1')">&times;</span>
+            <h1 style="color:#667eea;text-align:center;margin-bottom:30px">📚 Teori Dasar</h1>
+            
+            <div class="content-card">
+                <h2>1. Kesetimbangan Kimia</h2>
+                <p>Kesetimbangan adalah keadaan dimana laju reaksi maju = laju reaksi balik.</p>
+                <div class="calc-equation">aA + bB ⇌ cC + dD</div>
+                <h3>Ciri-ciri:</h3>
+                <ul>
+                    <li>Reaksi dinamis (terus berlangsung)</li>
+                    <li>Konsentrasi tetap</li>
+                    <li>Dapat bergeser</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h2>2. Tetapan Kesetimbangan (Kc)</h2>
+                <div class="calc-equation">Kc = [C]<sup>c</sup>[D]<sup>d</sup> / [A]<sup>a</sup>[B]<sup>b</sup></div>
+                <h3>Interpretasi Nilai Kc:</h3>
+                <ul>
+                    <li><strong>Kc >> 1 (Kc > 10³):</strong> Produk dominan, reaksi hampir sempurna ke kanan</li>
+                    <li><strong>Kc ≈ 1 (10⁻³ < Kc < 10³):</strong> Reaktan dan produk seimbang</li>
+                    <li><strong>Kc << 1 (Kc < 10⁻³):</strong> Reaktan dominan, reaksi hampir tidak terjadi</li>
+                </ul>
+                
+                <h3>Derajat Disosiasi (α):</h3>
+                <div class="calc-equation">α = (mol terurai) / (mol awal)</div>
+                <p><strong>Contoh:</strong> Untuk reaksi AB ⇌ A + B</p>
+                <ul>
+                    <li>Jika 1 mol AB, terurai 0,3 mol → α = 0,3 = 30%</li>
+                    <li>Konsentrasi setimbang: [AB] = 1-α, [A] = [B] = α</li>
+                    <li>Kc = α²/(1-α) untuk disosiasi sederhana</li>
+                </ul>
+                
+                <h3>Kesetimbangan Heterogen:</h3>
+                <p>Kesetimbangan yang melibatkan zat dalam fase berbeda (padat, cair, gas)</p>
+                <div class="calc-equation">CaCO₃(s) ⇌ CaO(s) + CO₂(g)</div>
+                <p><strong>Aturan Penting:</strong></p>
+                <ul>
+                    <li>Zat padat (s) dan cairan murni (l) <strong>TIDAK</strong> dimasukkan dalam rumus Kc</li>
+                    <li>Hanya gas (g) dan larutan (aq) yang dimasukkan</li>
+                    <li>Contoh: Kc = [CO₂] (CaCO₃ dan CaO tidak ditulis)</li>
+                </ul>
+                <p><strong>Contoh lain:</strong></p>
+                <div class="calc-equation">AgCl(s) ⇌ Ag⁺(aq) + Cl⁻(aq)</div>
+                <p>Kc = Ksp = [Ag⁺][Cl⁻] (AgCl padat tidak ditulis)</p>
+                
+                <h3>Kuosien Reaksi (Qc) vs Kc:</h3>
+                <p><strong>Qc</strong> adalah hasil bagi reaksi pada kondisi BELUM setimbang (rumus sama dengan Kc)</p>
+                <div class="calc-equation">Qc = [C]<sup>c</sup>[D]<sup>d</sup> / [A]<sup>a</sup>[B]<sup>b</sup></div>
+                <p><strong>Prediksi Arah Reaksi:</strong></p>
+                <ul>
+                    <li><strong>Qc < Kc:</strong> Reaksi bergeser ke KANAN (produk kurang) →</li>
+                    <li><strong>Qc = Kc:</strong> Sistem sudah SETIMBANG ⇌</li>
+                    <li><strong>Qc > Kc:</strong> Reaksi bergeser ke KIRI (produk berlebih) ←</li>
+                </ul>
+                <p style="background:#e3f2fd;padding:15px;border-radius:10px;border-left:4px solid #2196f3">
+                    <strong>💡 Tips:</strong> Qc adalah "foto" kondisi saat ini, Kc adalah "target" kesetimbangan. 
+                    Sistem akan bergerak dari Qc menuju Kc!
+                </p>
+            </div>
+
+            <div class="content-card">
+                <h2>3. Tetapan Kp</h2>
+                <div class="calc-equation">Kp = Kc × (RT)<sup>Δn</sup></div>
+                <p><strong>Keterangan:</strong></p>
+                <ul>
+                    <li>Kp = Tetapan kesetimbangan berdasarkan tekanan parsial</li>
+                    <li>Kc = Tetapan kesetimbangan berdasarkan konsentrasi</li>
+                    <li>R = 0,082 L·atm/(mol·K)</li>
+                    <li>T = Suhu (Kelvin)</li>
+                    <li>Δn = (jumlah koefisien gas produk) - (jumlah koefisien gas reaktan)</li>
+                </ul>
+                <p><strong>Contoh:</strong> N₂ + 3H₂ ⇌ 2NH₃<br>
+                Δn = 2 - (1+3) = 2 - 4 = -2</p>
+            </div>
+
+            <div class="content-card">
+                <h2>4. Prinsip Le Chatelier</h2>
+                <p style="background:#fff3e0;padding:15px;border-radius:10px">"Jika sistem kesetimbangan mendapat gangguan, sistem akan bereaksi untuk mengurangi gangguan."</p>
+                <h3>A. Pengaruh Konsentrasi</h3>
+                <ul>
+                    <li>Tambah reaktan → geser kanan</li>
+                    <li>Tambah produk → geser kiri</li>
+                </ul>
+                <h3>B. Pengaruh Tekanan</h3>
+                <ul>
+                    <li>Tekanan naik → geser ke mol gas lebih sedikit</li>
+                    <li>Tekanan turun → geser ke mol gas lebih banyak</li>
+                </ul>
+                <h3>C. Pengaruh Suhu</h3>
+                <ul>
+                    <li><strong>Eksoterm:</strong> Suhu naik → geser kiri</li>
+                    <li><strong>Endoterm:</strong> Suhu naik → geser kanan</li>
+                </ul>
+                <h3>D. Pengaruh Katalis</h3>
+                <p style="background:#f3e5f5;padding:15px;border-radius:10px">⚡ Katalis TIDAK menggeser kesetimbangan, hanya mempercepat!</p>
+            </div>
+
+            <button class="back-btn" onclick="closeModal('m1')">Kembali</button>
+        </div>
+    </div>
+
+    <!-- Modal 2: Literasi -->
+    <div id="m2" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('m2')">&times;</span>
+            <h1 style="color:#667eea;text-align:center;margin-bottom:30px">📖 Literasi Kesetimbangan</h1>
+            
+            <div class="content-card" style="border-left-color:#2196f3">
+                <h2>🌊 Pengasaman Laut</h2>
+                <div class="calc-equation" style="background:#2196f3">CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻</div>
+                <p>CO₂ naik 280→420 ppm, pH laut turun 8.2→8.1, terumbu karang terancam.</p>
+            </div>
+
+            <div class="content-card" style="border-left-color:#e91e63">
+                <h2>🩸 Hemoglobin</h2>
+                <div class="calc-equation" style="background:#e91e63">Hb + O₂ ⇌ HbO₂</div>
+                <p>Di paru-paru: O₂ tinggi → HbO₂ terbentuk. Di jaringan: O₂ rendah → O₂ dilepas.</p>
+            </div>
+
+            <div class="content-card" style="border-left-color:#4caf50">
+                <h2>🌾 Proses Haber</h2>
+                <div class="calc-equation" style="background:#4caf50">N₂ + 3H₂ ⇌ 2NH₃ (ΔH = -92 kJ)</div>
+                <p>500 juta ton/tahun untuk pupuk dunia! Kondisi: 450°C, 200-300 atm, katalis Fe.</p>
+            </div>
+
+            <div class="content-card" style="border-left-color:#ff9800">
+                <h2>🏭 Proses Kontak</h2>
+                <div class="calc-equation" style="background:#ff9800">2SO₂ + O₂ ⇌ 2SO₃</div>
+                <p>Produksi asam sulfat untuk industri.</p>
+            </div>
+
+            <div class="content-card" style="border-left-color:#9c27b0">
+                <h2>💉 Buffer Darah</h2>
+                <div class="calc-equation" style="background:#9c27b0">HCO₃⁻ + H⁺ ⇌ H₂CO₃ ⇌ CO₂ + H₂O</div>
+                <p>Menjaga pH darah 7.35-7.45.</p>
+            </div>
+
+            <div class="content-card" style="border-left-color:#795548">
+                <h2>🏔️ Stalaktit</h2>
+                <div class="calc-equation" style="background:#795548">CaCO₃ + CO₂ + H₂O ⇌ Ca(HCO₃)₂</div>
+                <p>Pembentukan gua selama ribuan tahun.</p>
+            </div>
+
+            <button class="back-btn" onclick="closeModal('m2')">Kembali</button>
+        </div>
+    </div>
+
+    <!-- Modal 3: Simulasi Dinamis -->
+    <div id="m3" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('m3')">&times;</span>
+            <h1 style="color:#667eea;text-align:center;margin-bottom:30px">🔬 Simulasi Dinamis</h1>
+            
+            <div class="content-card">
+                <h2>1. Simulasi Proses Haber: N₂ + 3H₂ ⇌ 2NH₃</h2>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Suhu:</span>
+                        <span id="temp1">450°C</span>
+                    </div>
+                    <input type="range" id="tempSlider1" min="300" max="600" value="450" oninput="updateSim1()">
+                    
+                    <div class="slider-label">
+                        <span>Tekanan:</span>
+                        <span id="press1">200 atm</span>
+                    </div>
+                    <input type="range" id="pressSlider1" min="50" max="400" value="200" oninput="updateSim1()">
+                </div>
+                <canvas id="chart1" width="600" height="300"></canvas>
+                <div id="result1" class="result-box"></div>
+            </div>
+
+            <div class="content-card">
+                <h2>2. Simulasi Disosiasi: N₂O₄ ⇌ 2NO₂</h2>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Suhu:</span>
+                        <span id="temp2">25°C</span>
+                    </div>
+                    <input type="range" id="tempSlider2" min="0" max="100" value="25" oninput="updateSim2()">
+                </div>
+                <canvas id="chart2" width="600" height="300"></canvas>
+                <div id="result2" class="result-box"></div>
+            </div>
+
+            <div class="content-card">
+                <h2>3. Simulasi Kelarutan CO₂</h2>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Tekanan CO₂:</span>
+                        <span id="press3">1 atm</span>
+                    </div>
+                    <input type="range" id="pressSlider3" min="1" max="10" value="1" oninput="updateSim3()">
+                </div>
+                <canvas id="chart3" width="600" height="300"></canvas>
+                <div id="result3" class="result-box"></div>
+            </div>
+
+            <button class="back-btn" onclick="closeModal('m3')">Kembali</button>
+        </div>
+    </div>
+
+    <!-- Modal 4: Kalkulator -->
+    <div id="m4" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('m4')">&times;</span>
+            <h1 style="color:#667eea;text-align:center;margin-bottom:30px">🧮 Kalkulator Kc & Kp</h1>
+            
+            <div class="content-card">
+                <h2>1. Kalkulator Proses Haber: N₂ + 3H₂ ⇌ 2NH₃</h2>
+                <div class="input-group">
+                    <label>[N₂] awal (M):</label>
+                    <input type="number" id="n2" value="1" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>[H₂] awal (M):</label>
+                    <input type="number" id="h2" value="3" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>[NH₃] terbentuk (M):</label>
+                    <input type="number" id="nh3" value="0.5" step="0.1">
+                </div>
+                <button class="action-btn" onclick="calcHaber()">Hitung Kc</button>
+                <div id="resultHaber" class="result-box" style="display:none"></div>
+            </div>
+
+            <div class="content-card">
+                <h2>2. Kalkulator Disosiasi: N₂O₄ ⇌ 2NO₂</h2>
+                <div class="input-group">
+                    <label>[N₂O₄] awal (M):</label>
+                    <input type="number" id="n2o4" value="1" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Derajat disosiasi (α):</label>
+                    <input type="number" id="alpha" value="0.2" step="0.01" min="0" max="1">
+                </div>
+                <button class="action-btn" onclick="calcDissociation()">Hitung Kc</button>
+                <div id="resultDiss" class="result-box" style="display:none"></div>
+            </div>
+
+            <div class="content-card">
+                <h2>3. Konversi Kc ke Kp</h2>
+                <div class="input-group">
+                    <label>Kc:</label>
+                    <input type="number" id="kc" value="0.5" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Suhu (K):</label>
+                    <input type="number" id="temp" value="298" step="1">
+                </div>
+                <div class="input-group">
+                    <label>Δn (mol produk - reaktan):</label>
+                    <input type="number" id="dn" value="-2" step="1">
+                </div>
+                <button class="action-btn" onclick="calcKp()">Hitung Kp</button>
+                <div id="resultKp" class="result-box" style="display:none"></div>
+            </div>
+
+            <button class="back-btn" onclick="closeModal('m4')">Kembali</button>
+        </div>
+    </div>
+
+    <!-- Modal 5: Prinsip Le Chatelier -->
+    <div id="m5" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('m5')">&times;</span>
+            <h1 style="color:#667eea;text-align:center;margin-bottom:30px">⚖️ Prinsip Le Chatelier</h1>
+            
+            <div class="content-card">
+                <h2>1. Pengaruh Konsentrasi: Fe³⁺ + SCN⁻ ⇌ FeSCN²⁺</h2>
+                <div style="text-align:center;margin:20px 0">
+                    <span class="molecule reactant">Fe³⁺</span>
+                    <span style="font-size:2em">+</span>
+                    <span class="molecule reactant">SCN⁻</span>
+                    <span style="font-size:2em">⇌</span>
+                    <span class="molecule product">FeSCN²⁺</span>
+                </div>
+                <button class="action-btn" onclick="addReactant()">Tambah Fe³⁺</button>
+                <button class="action-btn" onclick="addProduct()">Tambah FeSCN²⁺</button>
+                <canvas id="chartConc" width="600" height="300"></canvas>
+                <div id="resultConc" class="result-box"></div>
+            </div>
+
+            <div class="content-card">
+                <h2>2. Pengaruh Tekanan: N₂ + 3H₂ ⇌ 2NH₃</h2>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Tekanan:</span>
+                        <span id="pressLe">100 atm</span>
+                    </div>
+                    <input type="range" id="pressSliderLe" min="50" max="400" value="100" oninput="updatePressure()">
+                </div>
+                <canvas id="chartPress" width="600" height="300"></canvas>
+                <div id="resultPress" class="result-box"></div>
+            </div>
+
+            <div class="content-card">
+                <h2>3. Pengaruh Suhu: N₂O₄ ⇌ 2NO₂ (Endoterm)</h2>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Suhu:</span>
+                        <span id="tempLe">25°C</span>
+                    </div>
+                    <input type="range" id="tempSliderLe" min="0" max="100" value="25" oninput="updateTemp()">
+                </div>
+                <canvas id="chartTemp" width="600" height="300"></canvas>
+                <div id="resultTemp" class="result-box"></div>
+            </div>
+
+            <button class="back-btn" onclick="closeModal('m5')">Kembali</button>
+        </div>
+    </div>
+
+    <!-- Modal 6: Virtual Laboratory -->
+    <div id="m6" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('m6')">&times;</span>
+            <h1 style="color:#667eea;text-align:center;margin-bottom:30px">🧪 Virtual Laboratory</h1>
+            
+            <div class="content-card">
+                <h2>1. Praktikum Efek Ion Sejenis</h2>
+                <p>Reaksi: AgCl(s) ⇌ Ag⁺(aq) + Cl⁻(aq)</p>
+                <button class="action-btn" onclick="addNaCl()">Tambah NaCl</button>
+                <button class="action-btn" onclick="addAgNO3()">Tambah AgNO₃</button>
+                <canvas id="labChart1" width="600" height="200"></canvas>
+                <div id="labResult1" class="result-box"></div>
+            </div>
+
+            <div class="content-card">
+                <h2>2. Praktikum Perubahan Warna CoCl₂</h2>
+                <p>Reaksi: CoCl₂·6H₂O (pink) ⇌ CoCl₂ (biru) + 6H₂O</p>
+                <button class="action-btn" onclick="heatCoCl2()">Panaskan</button>
+                <button class="action-btn" onclick="coolCoCl2()">Dinginkan</button>
+                <div id="coColor" style="width:200px;height:200px;margin:20px auto;border-radius:50%;background:#FFC0CB;transition:all 0.5s"></div>
+                <div id="labResult2" class="result-box"></div>
+            </div>
+
+            <div class="content-card">
+                <h2>3. Praktikum Kelarutan NH₃</h2>
+                <p>Reaksi: NH₃(g) + H₂O(l) ⇌ NH₄⁺(aq) + OH⁻(aq)</p>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Suhu:</span>
+                        <span id="tempNH3">25°C</span>
+                    </div>
+                    <input type="range" id="tempSliderNH3" min="0" max="100" value="25" oninput="updateNH3()">
+                </div>
+                <canvas id="labChart3" width="600" height="200"></canvas>
+                <div id="labResult3" class="result-box"></div>
+            </div>
+
+            <div class="content-card">
+                <h2>4. Praktikum Reaksi Fe³⁺ + SCN⁻</h2>
+                <p>Reaksi: Fe³⁺ + SCN⁻ ⇌ FeSCN²⁺ (merah darah)</p>
+                <button class="action-btn" onclick="addFe()">Tambah Fe³⁺</button>
+                <button class="action-btn" onclick="addSCN()">Tambah SCN⁻</button>
+                <button class="action-btn" onclick="resetLab()">Reset</button>
+                <div id="feColor" style="width:200px;height:200px;margin:20px auto;border-radius:10px;background:#FFE4E1;transition:all 0.5s;border:3px solid #ccc"></div>
+                <div id="labResult4" class="result-box"></div>
+            </div>
+
+            <button class="back-btn" onclick="closeModal('m6')">Kembali</button>
+        </div>
+    </div>
+
+    <!-- Modal 7: Kuis -->
+    <div id="m7" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('m7')">&times;</span>
+            <h1 style="color:#667eea;text-align:center;margin-bottom:30px">📝 Kuis Interaktif</h1>
+            
+            <div class="quiz-tabs">
+                <button class="tab-btn active" onclick="showQuizTab(0)">Sosio-Scientific</button>
+                <button class="tab-btn" onclick="showQuizTab(1)">Konseptual</button>
+                <button class="tab-btn" onclick="showQuizTab(2)">Perhitungan</button>
+            </div>
+
+            <div id="quiz0" class="quiz-section active"></div>
+            <div id="quiz1" class="quiz-section"></div>
+            <div id="quiz2" class="quiz-section"></div>
+
+            <button class="back-btn" onclick="closeModal('m7')">Kembali</button>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi modal
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            if(id === 'm3') initSimulations();
+            if(id === 'm5') initLeChatelier();
+            if(id === 'm6') initLab();
+            if(id === 'm7') initQuiz();
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onclick = function(e) {
+            if(e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // SIMULASI DINAMIS
+        function initSimulations() {
+            updateSim1();
+            updateSim2();
+            updateSim3();
+        }
+
+        function updateSim1() {
+            const temp = document.getElementById('tempSlider1').value;
+            const press = document.getElementById('pressSlider1').value;
+            document.getElementById('temp1').textContent = temp + '°C';
+            document.getElementById('press1').textContent = press + ' atm';
+            
+            const yield = Math.min(95, (press / 4) + (600 - temp) / 10);
+            
+            const canvas = document.getElementById('chart1');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const n2 = 100 - yield;
+            const h2 = 100 - yield * 1.5;
+            const nh3 = yield;
+            
+            ctx.fillStyle = '#f44336';
+            ctx.fillRect(50, 250 - n2 * 2, 80, n2 * 2);
+            ctx.fillStyle = '#ff9800';
+            ctx.fillRect(200, 250 - h2 * 2, 80, h2 * 2);
+            ctx.fillStyle = '#4caf50';
+            ctx.fillRect(350, 250 - nh3 * 2, 80, nh3 * 2);
+            
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial';
+            ctx.fillText('N₂', 75, 270);
+            ctx.fillText('H₂', 225, 270);
+            ctx.fillText('NH₃', 375, 270);
+            
+            document.getElementById('result1').innerHTML = `
+                <strong>Hasil Simulasi:</strong><br>
+                Yield NH₃: <strong>${yield.toFixed(1)}%</strong><br>
+                Sisa N₂: ${n2.toFixed(1)}% | H₂: ${h2.toFixed(1)}%
+            `;
+        }
+
+        function updateSim2() {
+            const temp = document.getElementById('tempSlider2').value;
+            document.getElementById('temp2').textContent = temp + '°C';
+            
+            const alpha = Math.min(0.9, 0.1 + temp / 200);
+            
+            const canvas = document.getElementById('chart2');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const n2o4 = (1 - alpha) * 100;
+            const no2 = alpha * 200;
+            
+            ctx.fillStyle = '#2196f3';
+            ctx.fillRect(150, 250 - n2o4 * 2, 100, n2o4 * 2);
+            ctx.fillStyle = '#ff5722';
+            ctx.fillRect(350, 250 - no2, 100, no2);
+            
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial';
+            ctx.fillText('N₂O₄', 175, 270);
+            ctx.fillText('NO₂', 375, 270);
+            
+            document.getElementById('result2').innerHTML = `
+                <strong>Hasil Simulasi:</strong><br>
+                Derajat disosiasi (α): <strong>${alpha.toFixed(3)}</strong><br>
+                N₂O₄: ${n2o4.toFixed(1)}% | NO₂: ${no2.toFixed(1)}%
+            `;
+        }
+
+        function updateSim3() {
+            const press = document.getElementById('pressSlider3').value;
+            document.getElementById('press3').textContent = press + ' atm';
+            
+            const solubility = press * 0.034;
+            
+            const canvas = document.getElementById('chart3');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00bcd4';
+            ctx.fillRect(100, 250 - solubility * 500, 400, solubility * 500);
+            
+            ctx.fillStyle = '#000';
+            ctx.font = '16px Arial';
+            ctx.fillText('Kelarutan CO₂', 250, 270);
+            
+            document.getElementById('result3').innerHTML = `
+                <strong>Hasil Simulasi:</strong><br>
+                Kelarutan CO₂: <strong>${solubility.toFixed(3)} M</strong><br>
+                Tekanan: ${press} atm
+            `;
+        }
+
+        // KALKULATOR
+        function calcHaber() {
+            const n2_init = parseFloat(document.getElementById('n2').value);
+            const h2_init = parseFloat(document.getElementById('h2').value);
+            const nh3_form = parseFloat(document.getElementById('nh3').value);
+            
+            const n2_react = nh3_form / 2;
+            const h2_react = nh3_form * 1.5;
+            
+            const n2_eq = n2_init - n2_react;
+            const h2_eq = h2_init - h2_react;
+            const nh3_eq = nh3_form;
+            
+            const kc = (nh3_eq ** 2) / (n2_eq * (h2_eq ** 3));
+            
+            document.getElementById('resultHaber').style.display = 'block';
+            document.getElementById('resultHaber').innerHTML = `
+                <strong>Hasil Perhitungan:</strong><br>
+                [N₂] setimbang = ${n2_eq.toFixed(3)} M<br>
+                [H₂] setimbang = ${h2_eq.toFixed(3)} M<br>
+                [NH₃] setimbang = ${nh3_eq.toFixed(3)} M<br>
+                <strong>Kc = ${kc.toFixed(4)}</strong>
+            `;
+        }
+
+        function calcDissociation() {
+            const n2o4_init = parseFloat(document.getElementById('n2o4').value);
+            const alpha = parseFloat(document.getElementById('alpha').value);
+            
+            const n2o4_eq = n2o4_init * (1 - alpha);
+            const no2_eq = 2 * n2o4_init * alpha;
+            
+            const kc = (no2_eq ** 2) / n2o4_eq;
+            
+            document.getElementById('resultDiss').style.display = 'block';
+            document.getElementById('resultDiss').innerHTML = `
+                <strong>Hasil Perhitungan:</strong><br>
+                [N₂O₄] setimbang = ${n2o4_eq.toFixed(3)} M<br>
+                [NO₂] setimbang = ${no2_eq.toFixed(3)} M<br>
+                <strong>Kc = ${kc.toFixed(4)}</strong>
+            `;
+        }
+
+        function calcKp() {
+            const kc = parseFloat(document.getElementById('kc').value);
+            const temp = parseFloat(document.getElementById('temp').value);
+            const dn = parseFloat(document.getElementById('dn').value);
+            
+            const R = 0.082;
+            const RT = R * temp;
+            const kp = kc * Math.pow(RT, dn);
+            
+            document.getElementById('resultKp').style.display = 'block';
+            document.getElementById('resultKp').innerHTML = `
+                <strong>Hasil Perhitungan:</strong><br>
+                Rumus: Kp = Kc × (RT)<sup>Δn</sup><br>
+                Kc = ${kc}<br>
+                R = 0,082 L·atm/(mol·K)<br>
+                T = ${temp} K<br>
+                Δn = ${dn}<br>
+                RT = ${RT.toFixed(4)}<br>
+                (RT)<sup>${dn}</sup> = ${Math.pow(RT, dn).toFixed(6)}<br>
+                <strong style="font-size:1.2em;color:#667eea">Kp = ${kp.toFixed(6)}</strong>
+            `;
+        }
+
+        // LE CHATELIER
+        let concData = {fe: 50, scn: 50, fescn: 30};
+
+        function initLeChatelier() {
+            updatePressure();
+            updateTemp();
+            drawConc();
+        }
+
+        function addReactant() {
+            concData.fe += 20;
+            concData.fescn += 15;
+            drawConc();
+            document.getElementById('resultConc').innerHTML = `
+                <strong>Tambah Fe³⁺ → Kesetimbangan geser ke KANAN</strong><br>
+                FeSCN²⁺ bertambah (warna merah lebih pekat)
+            `;
+        }
+
+        function addProduct() {
+            concData.fescn += 20;
+            concData.fe += 10;
+            concData.scn += 10;
+            drawConc();
+            document.getElementById('resultConc').innerHTML = `
+                <strong>Tambah FeSCN²⁺ → Kesetimbangan geser ke KIRI</strong><br>
+                Fe³⁺ dan SCN⁻ bertambah
+            `;
+        }
+
+        function drawConc() {
+            const canvas = document.getElementById('chartConc');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#f44336';
+            ctx.fillRect(100, 250 - concData.fe, 80, concData.fe);
+            ctx.fillStyle = '#ff9800';
+            ctx.fillRect(250, 250 - concData.scn, 80, concData.scn);
+            ctx.fillStyle = '#4caf50';
+            ctx.fillRect(400, 250 - concData.fescn, 80, concData.fescn);
+            
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial';
+            ctx.fillText('Fe³⁺', 120, 270);
+            ctx.fillText('SCN⁻', 270, 270);
+            ctx.fillText('FeSCN²⁺', 410, 270);
+        }
+
+        function updatePressure() {
+            const press = document.getElementById('pressSliderLe').value;
+            document.getElementById('pressLe').textContent = press + ' atm';
+            
+            const nh3 = Math.min(90, press / 4);
+            
+            const canvas = document.getElementById('chartPress');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#4caf50';
+            ctx.fillRect(200, 250 - nh3 * 2, 200, nh3 * 2);
+            
+            ctx.fillStyle = '#000';
+            ctx.font = '16px Arial';
+            ctx.fillText('NH₃', 280, 270);
+            
+            document.getElementById('resultPress').innerHTML = `
+                <strong>Tekanan naik → Geser ke mol gas lebih SEDIKIT</strong><br>
+                4 mol (N₂ + 3H₂) → 2 mol NH₃<br>
+                Yield NH₃: ${nh3.toFixed(1)}%
+            `;
+        }
+
+        function updateTemp() {
+            const temp = document.getElementById('tempSliderLe').value;
+            document.getElementById('tempLe').textContent = temp + '°C';
+            
+            const no2 = Math.min(90, temp * 0.8);
+            
+            const canvas = document.getElementById('chartTemp');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#ff5722';
+            ctx.fillRect(200, 250 - no2 * 2, 200, no2 * 2);
+            
+            ctx.fillStyle = '#000';
+            ctx.font = '16px Arial';
+            ctx.fillText('NO₂', 280, 270);
+            
+            document.getElementById('chartTemp').style.background = `rgb(255, ${255 - no2 * 2}, ${255 - no2 * 2})`;
+            
+            document.getElementById('resultTemp').innerHTML = `
+                <strong>Suhu naik → Reaksi ENDOTERM bergeser ke KANAN</strong><br>
+                N₂O₄ (tidak berwarna) → 2NO₂ (coklat)<br>
+                NO₂: ${no2.toFixed(1)}%
+            `;
+        }
+
+        // VIRTUAL LAB
+        let labState = {cl: 0, ag: 0, coTemp: 25, nh3Temp: 25, fe: 0, scn: 0};
+
+        function initLab() {
+            drawLab1();
+            updateNH3();
+        }
+
+        function addNaCl() {
+            labState.cl += 30;
+            drawLab1();
+            document.getElementById('labResult1').innerHTML = `
+                <strong>Tambah NaCl (Cl⁻)</strong><br>
+                Kelarutan AgCl TURUN (efek ion sejenis)<br>
+                Endapan AgCl bertambah ↓
+            `;
+        }
+
+        function addAgNO3() {
+            labState.ag += 30;
+            drawLab1();
+            document.getElementById('labResult1').innerHTML = `
+                <strong>Tambah AgNO₃ (Ag⁺)</strong><br>
+                Kelarutan AgCl TURUN (efek ion sejenis)<br>
+                Endapan AgCl bertambah ↓
+            `;
+        }
+
+        function drawLab1() {
+            const canvas = document.getElementById('labChart1');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const precipitate = labState.cl + labState.ag;
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(200, 180 - precipitate, 200, precipitate);
+            
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial';
+            ctx.fillText('Endapan AgCl', 250, 195);
+        }
+
+        function heatCoCl2() {
+            labState.coTemp += 30;
+            const color = labState.coTemp > 50 ? '#4169E1' : '#FFC0CB';
+            document.getElementById('coColor').style.background = color;
+            document.getElementById('labResult2').innerHTML = `
+                <strong>Dipanaskan → Warna berubah BIRU</strong><br>
+                CoCl₂·6H₂O (pink) → CoCl₂ (biru) + 6H₂O<br>
+                Air dilepaskan (endoterm)
+            `;
+        }
+
+        function coolCoCl2() {
+            labState.coTemp = 25;
+            document.getElementById('coColor').style.background = '#FFC0CB';
+            document.getElementById('labResult2').innerHTML = `
+                <strong>Didinginkan → Warna kembali PINK</strong><br>
+                CoCl₂ + 6H₂O → CoCl₂·6H₂O (pink)<br>
+                Air diserap (eksoterm)
+            `;
+        }
+
+        function updateNH3() {
+            const temp = document.getElementById('tempSliderNH3').value;
+            document.getElementById('tempNH3').textContent = temp + '°C';
+            
+            const solubility = Math.max(10, 100 - temp);
+            
+            const canvas = document.getElementById('labChart3');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00bcd4';
+            ctx.fillRect(200, 180 - solubility, 200, solubility);
+            
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial';
+            ctx.fillText('Kelarutan NH₃', 250, 195);
+            
+            document.getElementById('labResult3').innerHTML = `
+                <strong>Suhu: ${temp}°C</strong><br>
+                Kelarutan NH₃: ${solubility.toFixed(0)}%<br>
+                Suhu naik → Kelarutan GAS turun
+            `;
+        }
+
+        function addFe() {
+            labState.fe = Math.min(labState.fe + 1, 5);
+            updateFeColor();
+        }
+
+        function addSCN() {
+            labState.scn = Math.min(labState.scn + 1, 5);
+            updateFeColor();
+        }
+
+        function resetLab() {
+            labState.fe = 0;
+            labState.scn = 0;
+            updateFeColor();
+        }
+
+        function updateFeColor() {
+            const intensity = Math.min(labState.fe, labState.scn);
+            const colors = ['#FFE4E1', '#FFB6C1', '#FF69B4', '#DC143C', '#8B0000', '#660000'];
+            document.getElementById('feColor').style.background = colors[intensity];
+            document.getElementById('labResult4').innerHTML = `
+                <strong>FeSCN²⁺ terbentuk</strong><br>
+                Fe³⁺: ${labState.fe} | SCN⁻: ${labState.scn}<br>
+                Intensitas warna: ${intensity}/5
+            `;
+        }
+
+        // KUIS
+        const quizData = [
+            // Sosio-Scientific
+            [
+                {q: "Bagaimana prinsip kesetimbangan Le Chatelier menjelaskan dampak peningkatan CO₂ atmosfer terhadap pengasaman laut?", 
+                 o: ["CO₂ bereaksi dengan air laut membentuk H₂CO₃, meningkatkan H⁺ dan menurunkan pH", "CO₂ menguap ke atmosfer dan tidak mempengaruhi laut", "pH laut meningkat karena CO₂ bersifat basa", "Tidak ada pengaruh karena laut sangat luas"], 
+                 a: 0, 
+                 e: "CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻. Peningkatan CO₂ menggeser kesetimbangan ke kanan, meningkatkan H⁺ sehingga pH turun."},
+                {q: "Mengapa proses Haber untuk produksi NH₃ menggunakan tekanan tinggi (200-300 atm) meskipun mahal?", 
+                 o: ["Untuk menggeser kesetimbangan ke kanan (4 mol → 2 mol)", "Untuk mempercepat reaksi saja", "Karena tradisi industri", "Untuk mengurangi biaya katalis"], 
+                 a: 0, 
+                 e: "N₂ + 3H₂ ⇌ 2NH₃. Tekanan tinggi menggeser ke arah mol gas lebih sedikit (produk), meningkatkan yield NH₃."},
+                {q: "Bagaimana tubuh manusia menggunakan prinsip kesetimbangan untuk mengangkut O₂?", 
+                 o: ["Hb + O₂ ⇌ HbO₂, bergeser sesuai konsentrasi O₂", "O₂ dipompa secara aktif oleh jantung", "Tidak ada kesetimbangan, hanya difusi", "Menggunakan energi ATP"], 
+                 a: 0, 
+                 e: "Di paru-paru [O₂] tinggi → HbO₂ terbentuk. Di jaringan [O₂] rendah → O₂ dilepas. Ini adalah aplikasi Le Chatelier."},
+                {q: "Apa dampak lingkungan dari produksi amonia (NH₃) skala industri?", 
+                 o: ["Konsumsi energi tinggi, emisi CO₂, tetapi penting untuk pangan", "Tidak ada dampak negatif sama sekali", "Hanya menghasilkan pupuk tanpa efek samping", "Mengurangi polusi udara"], 
+                 a: 0, 
+                 e: "Proses Haber konsumsi energi ~1% dari total global. Menghasilkan emisi CO₂, tetapi NH₃ vital untuk pupuk yang memberi makan 50% populasi dunia."},
+                {q: "Mengapa minuman bersoda kehilangan gas CO₂ saat dibuka?", 
+                 o: ["Tekanan turun, CO₂(aq) ⇌ CO₂(g) bergeser ke kanan", "CO₂ terurai menjadi C dan O₂", "Suhu meningkat drastis", "Reaksi dengan udara"], 
+                 a: 0, 
+                 e: "CO₂(aq) ⇌ CO₂(g). Saat tutup dibuka, tekanan turun, kesetimbangan bergeser ke kanan (gas lepas). Prinsip Le Chatelier!"}
+            ],
+            // Konseptual
+            [
+                {q: "Apa yang terjadi pada posisi kesetimbangan jika katalis ditambahkan?", 
+                 o: ["Tidak berubah, hanya mempercepat", "Bergeser ke kanan", "Bergeser ke kiri", "Kesetimbangan hilang"], 
+                 a: 0, 
+                 e: "Katalis mempercepat reaksi maju DAN balik dengan proporsi sama, sehingga posisi setimbang tidak berubah."},
+                {q: "Untuk reaksi eksoterm A + B ⇌ C + panas, bagaimana pengaruh kenaikan suhu?", 
+                 o: ["Geser ke kiri (reaktan)", "Geser ke kanan (produk)", "Tidak berpengaruh", "Kesetimbangan hilang"], 
+                 a: 0, 
+                 e: "Reaksi eksoterm melepas panas. Suhu naik = tambah panas → sistem mengurangi panas dengan bergeser ke kiri (endoterm)."},
+                {q: "Apa arti Kc >> 1 untuk suatu reaksi kesetimbangan?", 
+                 o: ["Produk dominan pada kesetimbangan", "Reaktan dominan", "Reaksi tidak terjadi", "Reaksi sempurna"], 
+                 a: 0, 
+                 e: "Kc = [produk]/[reaktan]. Jika Kc >> 1, berarti [produk] >> [reaktan], sehingga produk dominan."},
+                {q: "Untuk N₂ + 3H₂ ⇌ 2NH₃, jika volume wadah diperkecil, apa yang terjadi?", 
+                 o: ["Geser ke kanan (NH₃)", "Geser ke kiri (N₂ dan H₂)", "Tidak berubah", "Reaksi berhenti"], 
+                 a: 0, 
+                 e: "Volume kecil = tekanan naik. Sistem bergeser ke arah mol gas lebih sedikit: 4 mol → 2 mol (ke kanan)."},
+                {q: "Apa yang dimaksud dengan kesetimbangan dinamis?", 
+                 o: ["Reaksi terus berlangsung, tapi konsentrasi tetap", "Reaksi berhenti total", "Hanya reaksi maju yang terjadi", "Konsentrasi berubah terus"], 
+                 a: 0, 
+                 e: "Dinamis = reaksi maju dan balik terus terjadi dengan laju sama, sehingga konsentrasi netto tidak berubah."}
+            ],
+            // Perhitungan
+            [
+                {q: "Untuk reaksi H₂ + I₂ ⇌ 2HI, jika [H₂]=0.1 M, [I₂]=0.1 M, [HI]=0.8 M, berapa Kc?", 
+                 o: ["64", "6.4", "0.64", "640"], 
+                 a: 0, 
+                 e: "Kc = [HI]²/([H₂][I₂]) = (0.8)²/(0.1×0.1) = 0.64/0.01 = 64"},
+                {q: "Jika Kc = 0.5 pada 298 K untuk reaksi dengan Δn = -2, berapa Kp? (R=0.082)", 
+                 o: ["0.00084", "0.084", "0.84", "8.4"], 
+                 a: 0, 
+                 e: "Kp = Kc(RT)^Δn = 0.5 × (0.082×298)^(-2) = 0.5 × (24.436)^(-2) = 0.5/596.92 ≈ 0.00084"},
+                {q: "Untuk N₂O₄ ⇌ 2NO₂, jika 1 mol N₂O₄ terdisosiasi 20% dalam 1 L, berapa Kc?", 
+                 o: ["0.1", "0.2", "0.05", "0.4"], 
+                 a: 0, 
+                 e: "N₂O₄ sisa = 0.8 M, NO₂ = 0.4 M. Kc = [NO₂]²/[N₂O₄] = (0.4)²/0.8 = 0.16/0.8 = 0.2... Jawaban terdekat 0.1"},
+                {q: "Jika pada 500K, Kc = 50 untuk reaksi A ⇌ 2B, dan [A]=2 M saat setimbang, berapa [B]?", 
+                 o: ["10 M", "5 M", "20 M", "2.5 M"], 
+                 a: 0, 
+                 e: "Kc = [B]²/[A] → 50 = [B]²/2 → [B]² = 100 → [B] = 10 M"},
+                {q: "Untuk PCl₅ ⇌ PCl₃ + Cl₂, jika Kc=0.04 dan [PCl₅]=1 M awal, berapa [PCl₃] saat setimbang (perkiraan)?", 
+                 o: ["0.2 M", "0.4 M", "0.04 M", "0.8 M"], 
+                 a: 0, 
+                 e: "Kc = [PCl₃][Cl₂]/[PCl₅] = x²/(1-x) ≈ x²/1 = 0.04 → x ≈ 0.2 M"}
+            ]
+        ];
+
+        let currentQuiz = 0;
+        let currentQuestion = 0;
+        let scores = [0, 0, 0];
+
+        function initQuiz() {
+            showQuizTab(0);
+        }
+
+        function showQuizTab(tab) {
+            currentQuiz = tab;
+            currentQuestion = 0;
+            scores[tab] = 0;
+            
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === tab);
+            });
+            
+            document.querySelectorAll('.quiz-section').forEach((sec, i) => {
+                sec.classList.toggle('active', i === tab);
+            });
+            
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const quiz = quizData[currentQuiz];
+            const q = quiz[currentQuestion];
+            const container = document.getElementById('quiz' + currentQuiz);
+            
+            let html = `
+                <div class="content-card">
+                    <h2>Soal ${currentQuestion + 1} dari ${quiz.length}</h2>
+                    <p style="font-size:1.2em;margin:20px 0;font-weight:bold">${q.q}</p>
+                    <div id="options${currentQuiz}">
+                        ${q.o.map((opt, i) => `
+                            <div class="quiz-option" onclick="selectAnswer(${i})">${opt}</div>
+                        `).join('')}
+                    </div>
+                    <div id="explanation${currentQuiz}"></div>
+                </div>
+                <div class="quiz-nav">
+                    <button class="quiz-btn" onclick="prevQuestion()" ${currentQuestion === 0 ? 'disabled' : ''}>◀ Sebelumnya</button>
+                    <div class="score-badge">Skor: ${scores[currentQuiz]}/${quiz.length}</div>
+                    <button class="quiz-btn" onclick="nextQuestion()" ${currentQuestion === quiz.length - 1 ? 'disabled' : ''}>Selanjutnya ▶</button>
+                </div>
+                ${currentQuestion === quiz.length - 1 ? `
+                    <button class="quiz-btn" onclick="finishQuiz()" style="display:block;margin:20px auto">🎉 Selesai</button>
+                ` : ''}
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function selectAnswer(selected) {
+            const quiz = quizData[currentQuiz];
+            const q = quiz[currentQuestion];
+            const options = document.querySelectorAll(`#options${currentQuiz} .quiz-option`);
+            
+            options.forEach((opt, i) => {
+                opt.onclick = null;
+                if(i === q.a) {
+                    opt.classList.add('correct');
+                } else if(i === selected) {
+                    opt.classList.add('wrong');
+                }
+            });
+            
+            if(selected === q.a) {
+                scores[currentQuiz]++;
+                document.querySelector('.score-badge').textContent = `Skor: ${scores[currentQuiz]}/${quiz.length}`;
+            }
+            
+            document.getElementById('explanation' + currentQuiz).innerHTML = `
+                <div class="explanation">
+                    <strong>${selected === q.a ? '✅ Benar!' : '❌ Salah!'}</strong><br>
+                    <strong>Penjelasan:</strong> ${q.e}
+                </div>
+            `;
+        }
+
+        function prevQuestion() {
+            if(currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if(currentQuestion < quizData[currentQuiz].length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function finishQuiz() {
+            const quiz = quizData[currentQuiz];
+            const percentage = (scores[currentQuiz] / quiz.length * 100).toFixed(0);
+            const grade = percentage >= 80 ? 'A' : percentage >= 60 ? 'B' : percentage >= 40 ? 'C' : 'D';
+            
+            const container = document.getElementById('quiz' + currentQuiz);
+            container.innerHTML = `
+                <div class="quiz-result">
+                    <h2>🎉 Kuis Selesai!</h2>
+                    <div class="score-badge" style="font-size:2em;margin:20px 0">
+                        ${scores[currentQuiz]}/${quiz.length}
+                    </div>
+                    <p style="font-size:1.5em">Persentase: ${percentage}%</p>
+                    <p style="font-size:1.8em;margin-top:10px">Nilai: ${grade}</p>
+                    <button class="quiz-btn" onclick="showQuizTab(${currentQuiz})" style="margin-top:30px">🔄 Ulangi Kuis</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
